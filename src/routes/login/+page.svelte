@@ -1,15 +1,13 @@
 <script lang="ts">
 	import Textfield from '@smui/textfield';
 	import Icon from '@smui/textfield/icon';
-	import HelperText from '@smui/textfield/helper-text';
 	import Button, { Label } from '@smui/button';
 	import Card from '@smui/card';
+	import { applyAction, enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
+	import type { ActionData } from './$types';
 
-	let email: string = '';
-	let password: string = '';
-
-	/** @type {import('./$types').ActionData} */
-	export let form: { message: string };
+	export let form: ActionData;
 </script>
 
 <svelte:head>
@@ -29,15 +27,21 @@
 					<div class="mb-md mdc-typography--headline6">Welcome. Please log in.</div>
 				</div>
 				<div>
-					<form method="POST" action="login">
+					<form
+						method="POST"
+						action="login"
+						use:enhance={() => {
+							return async ({ result }) => {
+								if (result.type === 'redirect') {
+									goto('/');
+								} else if (result.type === 'invalid') {
+									applyAction(result);
+								}
+							};
+						}}
+					>
 						<div class="mdc-typography--subtitle1 mr-auto">Email</div>
-						<Textfield
-							variant="outlined"
-							required
-							bind:value={email}
-							class="mb-sm"
-							input$name="email"
-						>
+						<Textfield variant="outlined" required value="" class="mb-sm" input$name="email">
 							<Icon class="material-icons" slot="leadingIcon">mail</Icon>
 						</Textfield>
 						<div class="mdc-typography--subtitle1 mr-auto">Password</div>
@@ -45,7 +49,7 @@
 							variant="outlined"
 							type="password"
 							required
-							bind:value={password}
+							value=""
 							class="mb-md"
 							input$name="password"
 						>
@@ -76,7 +80,7 @@
 </div>
 
 <style lang="scss">
-	@use '../../theme/spacing';
+	@use 'src/theme/spacing';
 
 	.login {
 		flex-direction: column;

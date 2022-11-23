@@ -1,12 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '$env/static/private';
 import { invalid, redirect } from '@sveltejs/kit';
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import supabase from '../../lib/core/supabase';
 
 /** @type {import('./$types').Actions} */
 export const actions: import('./$types').Actions = {
-	default: async ({ request }: any) => {
+	default: async ({ request, cookies }: any) => {
 		const formData = await request.formData();
 		const email = formData.get('email');
 		const password = formData.get('password');
@@ -16,8 +13,15 @@ export const actions: import('./$types').Actions = {
 			password: password
 		});
 
-		if (data.user) {
-			throw redirect(303, '/');
+		if (data.session) {
+			cookies.set('session', data.session.access_token, {
+				path: '/',
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV == 'production',
+        maxAge: 60 * 60 * 24 * 30
+			});
+			throw redirect(302, '/');
 		} else {
 			return invalid(400, { message: error?.message });
 		}

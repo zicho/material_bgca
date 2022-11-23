@@ -4,14 +4,10 @@
 	import Button, { Label } from '@smui/button';
 	import Card from '@smui/card';
 	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import type { ActionData } from './$types';
 
-	let email: string = '';
-	let password: string = '';
-	let password_confirm: string = '';
-
-	/** @type {import('./$types').ActionData} */
-	export let form: { message: string };
+	export let form: ActionData;
 </script>
 
 <svelte:head>
@@ -50,7 +46,7 @@
 							variant="outlined"
 							type="email"
 							required
-							bind:value={email}
+							value=""
 							class="mb-sm"
 							input$name="email"
 						>
@@ -61,7 +57,7 @@
 							variant="outlined"
 							type="password"
 							required
-							bind:value={password}
+							value=""
 							class="mb-md"
 							input$name="password"
 						>
@@ -72,7 +68,7 @@
 							variant="outlined"
 							type="password"
 							required
-							bind:value={password_confirm}
+							value=""
 							class="mb-md"
 							input$name="password_confirm"
 						>
@@ -101,7 +97,7 @@
 </div>
 
 <style lang="scss">
-	@use '../../theme/spacing';
+	@use 'src/theme/spacing';
 
 	.login {
 		flex-direction: column;

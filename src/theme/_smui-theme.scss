@@ -38,3 +38,7 @@ a:visited {
 .color-error {
   color: color-palette.$red-900
 }
+
+.container {
+  padding: var(--space-lg);
+}

@@ -1,26 +1,7 @@
-<script lang="ts">
-	import Button, { Label } from '@smui/button';
+<svelte:head>
+	<title>Start Page</title>
+</svelte:head>
 
-	let clicked = 0;
-</script>
-
-<Button on:click={() => clicked++} variant="raised">
-	<Label>Raised</Label>
-</Button>
-<Button on:click={() => clicked++} variant="unelevated">
-	<Label>Unelevated</Label>
-</Button>
-<Button on:click={() => clicked++} variant="outlined">
-	<Label>Outlined</Label>
-</Button>
-<Button color="secondary" on:click={() => clicked++} variant="raised">
-	<Label>Raised</Label>
-</Button>
-<Button color="secondary" on:click={() => clicked++} variant="unelevated">
-	<Label>Unelevated</Label>
-</Button>
-<Button color="secondary" on:click={() => clicked++} variant="outlined">
-	<Label>Outlined</Label>
-</Button>
-
-<pre class="status">Clicked: {clicked}</pre>
+<div class="container">
+	<div class="mb-md mdc-typography--headline1">Welcome!</div>
+</div>
