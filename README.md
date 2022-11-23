@@ -1,6 +1,9 @@
-# BGCA - Built with SvelteKit and Svelte Material UI
+# BGCA - Built with SvelteKit, Supabase and Svelte Material UI
 
 [Sveltekit](https://github.com/sveltejs/kit)
+
+[Supabase](https://github.com/supabase/supabase)
+
 [Svelte Material UI](https://github.com/hperrin/svelte-material-ui)
 
 ## BGCA
@@ -9,7 +12,7 @@ W.I.P. Application built with Sveltekit and Material UI.
 
 ## Development
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Start a development server:
 
 ```bash
 npm run dev

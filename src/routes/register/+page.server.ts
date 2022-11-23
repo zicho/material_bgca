@@ -10,8 +10,14 @@ export const actions: import('./$types').Actions = {
 		const formData = await request.formData();
 		const email = formData.get('email');
 		const password = formData.get('password');
+		const password_confirm = formData.get('password_confirm');
 
-		const { data, error } = await supabase.auth.signInWithPassword({
+		if (password != password_confirm) {
+			console.log('nahhh');
+			return invalid(400, { message: 'Passwords do not match' });
+		}
+
+		const { data, error } = await supabase.auth.signUp({
 			email: email,
 			password: password
 		});

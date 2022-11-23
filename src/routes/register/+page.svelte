@@ -1,19 +1,21 @@
 <script lang="ts">
 	import Textfield from '@smui/textfield';
 	import Icon from '@smui/textfield/icon';
-	import HelperText from '@smui/textfield/helper-text';
 	import Button, { Label } from '@smui/button';
 	import Card from '@smui/card';
+	import { applyAction, enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 
 	let email: string = '';
 	let password: string = '';
+	let password_confirm: string = '';
 
 	/** @type {import('./$types').ActionData} */
 	export let form: { message: string };
 </script>
 
 <svelte:head>
-	<title>Login</title>
+	<title>Register</title>
 	<style>
 		body {
 			background: GhostWhite !important;
@@ -26,13 +28,27 @@
 		<div class="card-container mdc-elevation--z2">
 			<Card variant="outlined" padded>
 				<div class="w-100">
-					<div class="mb-md mdc-typography--headline6">Welcome. Please log in.</div>
+					<div class="mb-md mdc-typography--headline6">Register new user.</div>
 				</div>
 				<div>
-					<form method="POST" action="login">
+					<!-- svelte-ignore missing-declaration -->
+					<form
+						method="POST"
+						action="register"
+						use:enhance={() => {
+							return async ({ result }) => {
+								if (result.type === 'redirect') {
+									goto('/');
+								} else if (result.type === 'invalid') {
+									applyAction(result);
+								}
+							};
+						}}
+					>
 						<div class="mdc-typography--subtitle1 mr-auto">Email</div>
 						<Textfield
 							variant="outlined"
+							type="email"
 							required
 							bind:value={email}
 							class="mb-sm"
@@ -51,9 +67,20 @@
 						>
 							<Icon class="material-icons" slot="leadingIcon">key</Icon>
 						</Textfield>
+						<div class="mdc-typography--subtitle1 mr-auto">Confirm password</div>
+						<Textfield
+							variant="outlined"
+							type="password"
+							required
+							bind:value={password_confirm}
+							class="mb-md"
+							input$name="password_confirm"
+						>
+							<Icon class="material-icons" slot="leadingIcon">check</Icon>
+						</Textfield>
 						<div class="w-100">
 							<Button variant="unelevated">
-								<Label>Login</Label>
+								<Label>Register</Label>
 							</Button>
 						</div>
 					</form>
@@ -67,9 +94,7 @@
 						{form?.message}
 					</div>
 				</div>
-				<div class="mdc-typography--subtitle1">
-					<a href="/register">Wanna join? Register here.</a>
-				</div>
+				<div class="mdc-typography--subtitle1"><a href="/login">Already a member? Login.</a></div>
 			</Card>
 		</div>
 	</div>
