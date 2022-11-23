@@ -31,15 +31,7 @@
 					<form
 						method="POST"
 						action="register"
-						use:enhance={() => {
-							return async ({ result }) => {
-								if (result.type === 'redirect') {
-									goto('/');
-								} else if (result.type === 'invalid') {
-									applyAction(result);
-								}
-							};
-						}}
+						use:enhance
 					>
 						<div class="mdc-typography--subtitle1 mr-auto">Email</div>
 						<Textfield

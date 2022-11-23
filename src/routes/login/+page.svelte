@@ -30,15 +30,7 @@
 					<form
 						method="POST"
 						action="login"
-						use:enhance={() => {
-							return async ({ result }) => {
-								if (result.type === 'redirect') {
-									goto('/');
-								} else if (result.type === 'invalid') {
-									applyAction(result);
-								}
-							};
-						}}
+						use:enhance
 					>
 						<div class="mdc-typography--subtitle1 mr-auto">Email</div>
 						<Textfield variant="outlined" required value="" class="mb-sm" input$name="email">
