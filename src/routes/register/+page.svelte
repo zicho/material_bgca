@@ -3,8 +3,7 @@
 	import Icon from '@smui/textfield/icon';
 	import Button, { Label } from '@smui/button';
 	import Card from '@smui/card';
-	import { applyAction, enhance } from '$app/forms';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;
@@ -19,7 +18,7 @@
 	</style>
 </svelte:head>
 
-<div class="login center-screen mx-auto">
+<div class="center-screen mx-auto">
 	<div class="card-display">
 		<div class="card-container mdc-elevation--z2">
 			<Card variant="outlined" padded>
@@ -28,11 +27,19 @@
 				</div>
 				<div>
 					<!-- svelte-ignore missing-declaration -->
-					<form
-						method="POST"
-						action="register"
-						use:enhance
-					>
+					<form method="POST" action="register" use:enhance>
+						<div class="mdc-typography--subtitle1 mr-auto">Username</div>
+						<Textfield
+							variant="outlined"
+							type="text"
+							required
+							value=""
+							class="mb-sm"
+							input$name="username"
+						>
+							<Icon class="material-icons" slot="leadingIcon">person</Icon>
+						</Textfield>
+
 						<div class="mdc-typography--subtitle1 mr-auto">Email</div>
 						<Textfield
 							variant="outlined"
@@ -44,6 +51,7 @@
 						>
 							<Icon class="material-icons" slot="leadingIcon">mail</Icon>
 						</Textfield>
+
 						<div class="mdc-typography--subtitle1 mr-auto">Password</div>
 						<Textfield
 							variant="outlined"
@@ -55,6 +63,7 @@
 						>
 							<Icon class="material-icons" slot="leadingIcon">key</Icon>
 						</Textfield>
+
 						<div class="mdc-typography--subtitle1 mr-auto">Confirm password</div>
 						<Textfield
 							variant="outlined"
@@ -66,6 +75,7 @@
 						>
 							<Icon class="material-icons" slot="leadingIcon">check</Icon>
 						</Textfield>
+
 						<div class="w-100">
 							<Button variant="unelevated">
 								<Label>Register</Label>
@@ -90,12 +100,6 @@
 
 <style lang="scss">
 	@use 'src/theme/spacing';
-
-	.login {
-		flex-direction: column;
-		width: fit-content;
-	}
-
 	* :global(.smui-card--padded) {
 		padding: var(--space-md) var(--space-xl);
 	}

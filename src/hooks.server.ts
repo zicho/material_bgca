@@ -11,12 +11,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const { data, error } = await supabase.auth.getUser(session);
 
-	// if(error) {
-	//     return invalid(400, { message: error?.message });
-	// }
+	if(error) {
+	    throw error;
+	}
 
 	if (data?.user) {
 		event.locals.user = data.user;
+	} else {
+		throw "Could not parse user response in hooks.server.ts";
 	}
 
 	return await resolve(event);

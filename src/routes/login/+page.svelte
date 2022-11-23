@@ -19,7 +19,7 @@
 	</style>
 </svelte:head>
 
-<div class="login center-screen mx-auto">
+<div class="center-screen">
 	<div class="card-display">
 		<div class="card-container mdc-elevation--z2">
 			<Card variant="outlined" padded>
@@ -73,12 +73,7 @@
 
 <style lang="scss">
 	@use 'src/theme/spacing';
-
-	.login {
-		flex-direction: column;
-		width: fit-content;
-	}
-
+	
 	* :global(.smui-card--padded) {
 		padding: var(--space-md) var(--space-xl);
 	}
