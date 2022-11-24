@@ -31,7 +31,7 @@
 							<Label class="mb-xxs">|</Label>
 
 							<Button href="/profile/{$page.data.profile?.username}">
-								<Icon class="material-icons">alternate_email</Icon>
+								<Icon class="material-icons">person</Icon>
 								<Label>{$page.data.profile?.username}</Label>
 							</Button>
 
