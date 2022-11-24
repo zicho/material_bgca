@@ -18,10 +18,12 @@
 		<div class="mb-xxs mdc-typography--headline2">Edit profile: {$page.data.slug}</div>
 	</Cell>
 
-	<Cell spanDevices={{ desktop: 12, tablet: 8, phone: 4 }}>
-		<form style="display: flex; flex-direction: column; width: fit-content"
-		method="POST"
-		use:enhance>
+	<Cell spanDevices={{ desktop: 6, tablet: 8, phone: 4 }}>
+		<form
+			class="w-100"
+			method="POST"
+			use:enhance
+		>
 			<Textfield
 				textarea
 				bind:value={profileText}
