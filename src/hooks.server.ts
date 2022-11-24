@@ -1,6 +1,5 @@
 import supabase from './lib/core/supabase';
 import type { Handle } from '@sveltejs/kit';
-import { invalid } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const session = event.cookies.get('session');
@@ -11,14 +10,30 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const { data, error } = await supabase.auth.getUser(session);
 
-	if(error) {
-	    throw error;
+	if (error) {
+		// if get user gets error, clear session, might be token expiration
+		// TODO: refresh token?
+		event.cookies.delete('session');
+		return await resolve(event);
 	}
 
 	if (data?.user) {
 		event.locals.user = data.user;
+
+		const { data: profileData, error } = await supabase
+			.from('profiles')
+			.select('username, description')
+			.eq('id', data.user.id)
+			.single();
+
+		event.locals.profile = {
+			username: profileData?.username,
+			description: profileData?.description
+		};
 	} else {
-		throw "Could not parse user response in hooks.server.ts";
+		// this probably shouldnt happen, but to be safe, clear session
+		event.cookies.delete('session');
+		return await resolve(event);
 	}
 
 	return await resolve(event);

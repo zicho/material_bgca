@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw redirect(302, '/login');
 	}
 
-	return {
-        profile: locals.profile
-    }
+	if (locals.user) {
+		throw redirect(302, `/profile/${locals.profile?.username}`);
+	}
 };

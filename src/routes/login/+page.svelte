@@ -3,8 +3,7 @@
 	import Icon from '@smui/textfield/icon';
 	import Button, { Label } from '@smui/button';
 	import Card from '@smui/card';
-	import { applyAction, enhance } from '$app/forms';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;

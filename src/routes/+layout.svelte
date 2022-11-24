@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
-	import IconButton, { Icon } from '@smui/icon-button';
+	import { Icon } from '@smui/icon-button';
 	import Button, { Label } from '@smui/button';
 </script>
 
@@ -30,9 +30,9 @@
 
 							<Label class="mb-xxs">|</Label>
 
-							<Button href="/dashboard">
+							<Button href="/profile/{$page.data.profile?.username}">
 								<Icon class="material-icons">alternate_email</Icon>
-								<Label>{$page.data.user.email}</Label>
+								<Label>{$page.data.profile?.username}</Label>
 							</Button>
 
 							<form action="/logout" method="post" use:enhance>

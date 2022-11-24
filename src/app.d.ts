@@ -4,10 +4,12 @@
 
 declare namespace App {
 	interface Locals {
-		user: import("@supabase/supabase-js").User | null;
+		user: import('@supabase/supabase-js').User | null;
+		profile: { username: string; description: string } | null;
 	}
 	interface PageData {
-		user: import("@supabase/supabase-js").User | null;
+		user: import('@supabase/supabase-js').User | null;
+		profile: { username: string; description: string } | null;
 	}
 	// interface Error {}
 	// interface Platform {}

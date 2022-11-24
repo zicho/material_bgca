@@ -3,9 +3,9 @@
 </script>
 
 <svelte:head>
-	<title>Start Page</title>
+	<title>Dashboard</title>
 </svelte:head>
 
 <div class="container">
-	<div class="mb-md mdc-typography--headline2">Welcome {$page.data.profile?.username}!</div>
+	<div class="mb-md mdc-typography--headline2">Profile of {$page.data.slug}</div>
 </div>
