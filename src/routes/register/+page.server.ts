@@ -79,6 +79,4 @@ async function createProfile(username: string, user_id?: string) {
 		.from('profiles')
 		.update({ username: username, updated_at: new Date() })
 		.eq('id', user_id);
-
-	console.log(error);
 }

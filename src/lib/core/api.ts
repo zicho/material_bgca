@@ -30,12 +30,7 @@ export async function userExists(username: string): Promise<boolean> {
 }
 
 export async function sendMessage(from: string, to: string, content: string) {
-
-	console.dir ({from, to, content})
-
 	const { error } = await supabase
 		.from('messages')
 		.insert({ content: content, sender: from, recipient: to });
-
-		console.dir(error)
 }
