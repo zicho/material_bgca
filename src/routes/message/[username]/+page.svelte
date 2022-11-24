@@ -16,21 +16,21 @@
 
 <LayoutGrid>
 	<Cell spanDevices={{ desktop: 12, tablet: 8, phone: 4 }}>
-		<div class="mb-xxs mdc-typography--headline2">Edit profile: {data.slug}</div>
+		<div class="mb-xxs mdc-typography--headline2">Send message to {data.slug}</div>
 	</Cell>
 
 	<Cell spanDevices={{ desktop: 6, tablet: 8, phone: 4 }}>
 		<form class="w-100" method="POST" use:enhance>
 			<Textfield
 				textarea
-				bind:value={data.profile.description}
-				input$name="description"
+				value=''
+				input$name="content"
 				input$rows={8}
 				input$cols={48}
 				input$resizable={false}
 			/>
 			<Button class="mt-md" variant="unelevated">
-				<Label>Save</Label>
+				<Label>Send</Label>
 			</Button>
 		</form>
 	</Cell>

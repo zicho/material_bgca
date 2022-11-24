@@ -6,13 +6,13 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard</title>
+	<title>{data.username}'s profile</title>
 </svelte:head>
 
 <LayoutGrid>
 	<Cell spanDevices={{ desktop: 6, tablet: 4, phone: 2 }}>
 		<div class="mb-xxs mdc-typography--headline2">
-			{data.isYourPage ? 'Your profile' : `Profile of ${data.username}`}
+			{data.isYourPage ? 'Your profile' : `Profile of ${data.slug}`}
 		</div>
 	</Cell>
 
@@ -21,6 +21,10 @@
 			<Fab href="/profile/{data.username}/edit" color="primary" style="float: right">
 				<Icon class="material-icons">edit</Icon>
 			</Fab>
+		{:else}
+		<Fab href="/message/{data.slug}" color="primary" style="float: right">
+			<Icon class="material-icons">mail</Icon>
+		</Fab>
 		{/if}
 	</Cell>
 

@@ -32,7 +32,7 @@
 
 							<Button>
 								<Icon class="material-icons">notifications</Icon>
-								<Label>1</Label>
+								<Label>0</Label>
 							</Button>
 							<Button>
 								<Icon class="material-icons">mail</Icon>

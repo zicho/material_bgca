@@ -21,7 +21,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.locals.user = data.user;
 
 		const { data: profileData, error } = await supabase
-			.from('userinfo')
+			.from('profiles')
 			.select('username, description')
 			.eq('id', data.user.id)
 			.single();

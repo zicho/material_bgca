@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Start Page</title>
+	<title>Home</title>
 </svelte:head>
 
 <div class="container">

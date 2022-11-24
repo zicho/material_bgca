@@ -1,5 +1,5 @@
-import { getProfile } from "$lib/core/api";
-import { redirect } from "@sveltejs/kit";
+import { getProfile, userExists } from "$lib/core/api";
+import { error, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -7,8 +7,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		throw redirect(302, '/login');
 	}
 
-	var profile = await getProfile(params.username);
+	if(!await userExists(params.username)) {
+		throw error(404, "This user does not seem to exist.")
+	}
 
+	var profile = await getProfile(params.username);
+	
 	return {
         slug: params.username,
 		username: locals.userinfo?.username,
