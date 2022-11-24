@@ -4,8 +4,24 @@
 	import { Icon } from '@smui/icon-button';
 	import Button, { Label } from '@smui/button';
 	import type { PageData } from './$types';
+	import { subscribeToMessages, unreadMessages } from '$lib/stores/messages';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	
+	onMount(async () => {
+		console.log(data.userinfo?.username)
+		await subscribeToMessages(data.userinfo?.username as string);
+	});
 
 	export let data: PageData;
+
+	let unreadMessageCount = data.messageCount;
+
+	if (browser) {
+		unreadMessages.subscribe((value) => {
+			unreadMessageCount = value;
+		});
+	}
 </script>
 
 <main>
@@ -36,7 +52,7 @@
 							</Button>
 							<Button>
 								<Icon class="material-icons">mail</Icon>
-								<Label>0</Label>
+								<Label>{unreadMessageCount}</Label>
 							</Button>
 
 							<Label class="mb-xxs">|</Label>
