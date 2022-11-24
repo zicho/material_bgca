@@ -1,3 +1,4 @@
+import { browser } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
 import type { IProfile } from './interfaces/IProfile';
 import supabase from './supabase';
@@ -33,4 +34,20 @@ export async function sendMessage(from: string, to: string, content: string) {
 	const { error } = await supabase
 		.from('messages')
 		.insert({ content: content, sender: from, recipient: to });
+}
+
+export async function getUnreadMessageCount(username: string) {
+	const { data } = await supabase
+		.from('messages')
+		.select('*')
+		.eq('read', false)
+		.eq('recipient', username);
+
+	if(browser) {
+		console.dir(username)
+		console.dir("Length is " + data?.length)
+	}
+
+
+	return data?.length;
 }
