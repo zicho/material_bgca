@@ -4,7 +4,7 @@ import supabase from './supabase';
 
 export async function getProfile(username: string): Promise<IProfile> {
 	const { data, error } = await supabase
-		.from('profiles')
+		.from('userinfo')
 		.select('description')
 		.eq('username', username)
 		.single();
@@ -19,7 +19,7 @@ export async function updateProfileDescription(
 	description: string
 ): Promise<void> {
 	const { data, error } = await supabase
-		.from('profiles')
+		.from('userinfo')
 		.update({ description: description })
 		.match({ username: username });
 }

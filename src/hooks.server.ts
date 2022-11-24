@@ -21,14 +21,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.locals.user = data.user;
 
 		const { data: profileData, error } = await supabase
-			.from('profiles')
+			.from('userinfo')
 			.select('username, description')
 			.eq('id', data.user.id)
 			.single();
 
-		event.locals.profile = {
-			username: profileData?.username,
-			description: profileData?.description
+		event.locals.userinfo = {
+			username: profileData?.username
 		};
 	} else {
 		// this probably shouldnt happen, but to be safe, clear session

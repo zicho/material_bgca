@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
 	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
 	import { Icon } from '@smui/icon-button';
 	import Button, { Label } from '@smui/button';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 </script>
 
 <main>
@@ -17,7 +19,7 @@
 						</Button>
 					</Section>
 					<Section align="end" toolbar>
-						{#if $page.data.user}
+						{#if data.user}
 							<Button href="/">
 								<Icon class="material-icons">home</Icon>
 								<Label>Home</Label>
@@ -28,11 +30,20 @@
 								<Label>Dashboard</Label>
 							</Button>
 
+							<Button>
+								<Icon class="material-icons">notifications</Icon>
+								<Label>1</Label>
+							</Button>
+							<Button>
+								<Icon class="material-icons">mail</Icon>
+								<Label>0</Label>
+							</Button>
+
 							<Label class="mb-xxs">|</Label>
 
-							<Button href="/profile/{$page.data.profile?.username}">
+							<Button href="/profile/{data.userinfo?.username}">
 								<Icon class="material-icons">person</Icon>
-								<Label>{$page.data.profile?.username}</Label>
+								<Label>{data.userinfo?.username}</Label>
 							</Button>
 
 							<form action="/logout" method="post" use:enhance>

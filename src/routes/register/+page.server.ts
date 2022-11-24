@@ -35,7 +35,7 @@ export const actions: import('./$types').Actions = {
 		// todo: validate username
 
 		let { data: userData, error: userError } = await supabase
-			.from('profiles')
+			.from('userinfo')
 			.select(`username`)
 			.eq('username', username)
 
@@ -77,7 +77,7 @@ async function createProfile(username: string, user_id?: string) {
 	if (!user_id) return;
 
 	const { error } = await supabase
-		.from('profiles')
+		.from('userinfo')
 		.update({ username: username, updated_at: new Date() })
 		.eq('id', user_id);
 

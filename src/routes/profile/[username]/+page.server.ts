@@ -11,7 +11,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	return {
         slug: params.username,
-		profileInfo: profile,
-		isYourPage: locals.profile?.username == params.username
+		username: locals.userinfo?.username,
+		profile: profile,
+		isYourPage: locals.userinfo?.username == params.username
     }
 };

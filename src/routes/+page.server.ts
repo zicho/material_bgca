@@ -7,6 +7,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	return {
-        profile: locals.profile
+        userinfo: locals.userinfo
     }
 };

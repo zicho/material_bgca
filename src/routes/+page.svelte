@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import type { PageData } from './$types';
+	export let data: PageData;
 </script>
 
 <svelte:head>
@@ -7,5 +8,5 @@
 </svelte:head>
 
 <div class="container">
-	<div class="mb-md mdc-typography--headline2">Welcome {$page.data.profile?.username}!</div>
+	<div class="mb-md mdc-typography--headline2">Welcome {data.userinfo?.username}!</div>
 </div>
