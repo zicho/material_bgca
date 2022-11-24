@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import type { PageData } from './$types';
 	import Fab, { Icon } from '@smui/fab';
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
+	export let data: PageData;
 </script>
 
 <svelte:head>
@@ -10,12 +11,14 @@
 
 <LayoutGrid>
 	<Cell spanDevices={{ desktop: 6, tablet: 4, phone: 2 }}>
-		<div class="mb-xxs mdc-typography--headline2">{$page.data.isYourPage ? 'Your profile' : `Profile of ${$page.data.slug}`}</div>
+		<div class="mb-xxs mdc-typography--headline2">
+			{data.isYourPage ? 'Your profile' : `Profile of ${data.username}`}
+		</div>
 	</Cell>
 
 	<Cell spanDevices={{ desktop: 6, tablet: 4, phone: 2 }}>
-		{#if $page.data.isYourPage}
-			<Fab href="/profile/{$page.data.profile?.username}/edit" color="primary" style="float: right">
+		{#if data.isYourPage}
+			<Fab href="/profile/{data.username}/edit" color="primary" style="float: right">
 				<Icon class="material-icons">edit</Icon>
 			</Fab>
 		{/if}
@@ -24,8 +27,8 @@
 	<Cell spanDevices={{ desktop: 6, tablet: 4, phone: 2 }}>
 		<div class="mb-xxs mdc-typography--headline5">About</div>
 		<div class="mdc-typography--body1">
-			{#if $page.data.profileInfo?.description}
-				{$page.data.profileInfo?.description}
+			{#if data.profile?.description}
+				{data.profile?.description}
 			{:else}
 				<i>This user has not written a profile text.</i>
 			{/if}
