@@ -15,15 +15,10 @@ export async function subscribeToMessages(username: string) {
 	supabase
 		.channel('messages')
 		.on('postgres_changes', { event: '*', schema: '*' }, async (payload: any) => {
-
-			console.log(payload)
-
 			if (payload.new.recipient == _username) {
-				console.log("hit!")
+				console.log('hit!');
 				unreadMessages.set((await getUnreadMessageCount(_username)) as number);
 			}
 		})
 		.subscribe();
-
-	console.log("subscribed")
 }

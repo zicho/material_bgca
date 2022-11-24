@@ -7,9 +7,8 @@
 	import { subscribeToMessages, unreadMessages } from '$lib/stores/messages';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	
 	onMount(async () => {
-		console.log(data.userinfo?.username)
+		console.log(data.userinfo?.username);
 		await subscribeToMessages(data.userinfo?.username as string);
 	});
 
@@ -20,6 +19,7 @@
 	if (browser) {
 		unreadMessages.subscribe((value) => {
 			unreadMessageCount = value;
+
 		});
 	}
 </script>
@@ -36,7 +36,7 @@
 					</Section>
 					<Section align="end" toolbar>
 						{#if data.user}
-							<Button href="/">
+							<Button on:click={() => $unreadMessages++}>
 								<Icon class="material-icons">home</Icon>
 								<Label>Home</Label>
 							</Button>
