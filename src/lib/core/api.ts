@@ -43,11 +43,5 @@ export async function getUnreadMessageCount(username: string) {
 		.eq('read', false)
 		.eq('recipient', username);
 
-	if(browser) {
-		console.dir(username)
-		console.dir("Length is " + data?.length)
-	}
-
-
 	return data?.length;
 }

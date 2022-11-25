@@ -7,12 +7,15 @@
 	import { subscribeToMessages, unreadMessages } from '$lib/stores/messages';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+
+	export let data: PageData;
+
 	onMount(async () => {
-		console.log(data.userinfo?.username);
+		console.dir(data.userinfo?.username)
 		await subscribeToMessages(data.userinfo?.username as string);
 	});
 
-	export let data: PageData;
+	
 
 	let unreadMessageCount = data.messageCount;
 
