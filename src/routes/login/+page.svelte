@@ -5,8 +5,14 @@
 	import Card from '@smui/card';
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
+	import { onMount } from 'svelte';
+	import { unsubscribeAll } from '$lib/stores/unsubscribe';
 
 	export let form: ActionData;
+
+	onMount(async () => {
+		await unsubscribeAll();
+	});
 </script>
 
 <svelte:head>

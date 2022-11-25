@@ -11,18 +11,17 @@
 	export let data: PageData;
 
 	onMount(async () => {
-		console.dir(data.userinfo?.username)
-		await subscribeToMessages(data.userinfo?.username as string);
+		// if we find a user in session, hookup all subscriptions (otherwise this gets handled by landing page)
+		if (data.userinfo?.username) {
+			await subscribeToMessages(data.userinfo?.username as string);
+		}
 	});
-
-	
 
 	let unreadMessageCount = data.messageCount;
 
 	if (browser) {
 		unreadMessages.subscribe((value) => {
 			unreadMessageCount = value;
-
 		});
 	}
 </script>
