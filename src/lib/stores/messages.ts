@@ -1,4 +1,5 @@
-import { getUnreadMessageCount } from '$lib/core/api';
+import { getUnreadMessageCount, getUserNameByEmail } from '$lib/core/api';
+import { trimIfNecessary } from '$lib/core/helpers/stringHelper';
 import { notifySuccess } from '$lib/core/notify';
 import supabase from '$lib/core/supabase';
 import { writable } from 'svelte/store';
@@ -6,6 +7,11 @@ import { writable } from 'svelte/store';
 export let unreadMessages = writable(0);
 
 let _username: string;
+
+export async function subscribeViaEmail(email: string) {
+	const username = await getUserNameByEmail(email);
+	await subscribeToMessages(username);
+}
 
 export async function subscribeToMessages(username: string) {
 	// todo: type it up? payload is "any"
@@ -19,9 +25,7 @@ export async function subscribeToMessages(username: string) {
 				unreadMessages.set((await getUnreadMessageCount(_username)) as number);
 				notifySuccess(
 					`${payload.new.sender} sent you a message!`,
-					payload.new.content.length > 20
-						? `${payload.new.content.slice(0, 20)}...`
-						: `${payload.new.content}`
+					trimIfNecessary(payload.new.content, 20)
 				);
 			}
 		})

@@ -3,16 +3,22 @@
 	import Icon from '@smui/textfield/icon';
 	import Button, { Label } from '@smui/button';
 	import Card from '@smui/card';
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import type { ActionData } from './$types';
-	import { onMount } from 'svelte';
-	import { unsubscribeAll } from '$lib/stores/unsubscribe';
+	import { subscribeViaEmail } from '$lib/stores/messages';
 
 	export let form: ActionData;
 
-	onMount(async () => {
-		await unsubscribeAll();
-	});
+	function handleSubscriptions(data: {
+		action: URL;
+		data: FormData;
+		form: HTMLFormElement;
+		controller: AbortController;
+		cancel(): void;
+	}) {
+		let email: string = data.data.get('email') as string;
+		subscribeViaEmail(email);
+	}
 </script>
 
 <svelte:head>
@@ -32,10 +38,18 @@
 					<div class="mb-md mdc-typography--headline6">Welcome. Please log in.</div>
 				</div>
 				<div>
+					<!-- svelte-ignore missing-declaration -->
 					<form
 						method="POST"
 						action="login"
-						use:enhance
+						use:enhance={(data) => {
+							return async ({ result }) => {
+								if (result.type === 'redirect') {
+									handleSubscriptions(data);
+								}
+								applyAction(result);
+							};
+						}}
 					>
 						<div class="mdc-typography--subtitle1 mr-auto">Email</div>
 						<Textfield variant="outlined" required value="" class="mb-sm" input$name="email">
@@ -78,7 +92,7 @@
 
 <style lang="scss">
 	@use 'src/theme/spacing';
-	
+
 	* :global(.smui-card--padded) {
 		padding: var(--space-md) var(--space-xl);
 	}

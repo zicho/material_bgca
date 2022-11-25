@@ -52,10 +52,8 @@ export const actions: import('./$types').Actions = {
 		});
 
 		if (data) {
-			await createProfile(username, data.user?.id);
+			await createProfile(username, data.user?.email as string, data.user?.id);
 		}
-
-		await createProfile(username, data.user?.id);
 
 		if (data.session) {
 			cookies.set('session', data.session.access_token, {
@@ -72,11 +70,11 @@ export const actions: import('./$types').Actions = {
 	}
 };
 
-async function createProfile(username: string, user_id?: string) {
+async function createProfile(username: string, email: string, user_id?: string) {
 	if (!user_id) return;
 
 	const { error } = await supabase
 		.from('profiles')
-		.update({ username: username, updated_at: new Date() })
+		.update({ username: username, email: email, updated_at: new Date() })
 		.eq('id', user_id);
 }

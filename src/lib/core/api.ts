@@ -45,3 +45,8 @@ export async function getUnreadMessageCount(username: string) {
 
 	return data?.length;
 }
+
+export async function getUserNameByEmail(email: string) {
+	let { data, error } = await supabase.from('profiles').select(`username`).eq('email', email).single();
+	return data?.username;
+}

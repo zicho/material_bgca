@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
 	import { Icon } from '@smui/icon-button';
 	import Button, { Label } from '@smui/button';
@@ -7,11 +7,12 @@
 	import { subscribeToMessages, unreadMessages } from '$lib/stores/messages';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { unsubscribeAll } from '$lib/stores/unsubscribe';
 
 	export let data: PageData;
 
 	onMount(async () => {
-		// if we find a user in session, hookup all subscriptions (otherwise this gets handled by landing page)
+		// if we find a user in session, hookup all subscriptions (otherwise this gets handled by login hook)
 		if (data.userinfo?.username) {
 			await subscribeToMessages(data.userinfo?.username as string);
 		}
@@ -64,7 +65,18 @@
 								<Label>{data.userinfo?.username}</Label>
 							</Button>
 
-							<form action="/logout" method="post" use:enhance>
+							<form
+								action="/logout"
+								method="post"
+								use:enhance={() => {
+									return async ({ result }) => {
+										if (result.type === 'redirect') {
+											await unsubscribeAll();
+										}
+										applyAction(result);
+									};
+								}}
+							>
 								<Button>
 									<Icon class="material-icons">logout</Icon>
 									<Label>Log out</Label>
