@@ -15,12 +15,17 @@
 	import { Label } from '@smui/common';
 	import type { IMessage } from '$lib/core/interfaces/IMessage';
 	import Icon from '@smui/textfield/icon';
+	import { onMount } from 'svelte';
 
 	export let data: PageData;
 
+	let javascriptOn = false;
+
+	onMount(() => (javascriptOn = true));
+
 	let items: IMessage[] = data.messages;
 	let rowsPerPage = 10;
-	let currentPage = 0;
+	let currentPage = data.pageNo;
 
 	$: start = currentPage * rowsPerPage;
 	$: end = Math.min(start + rowsPerPage, items.length);
@@ -87,22 +92,31 @@
 					<Row>
 						<TableCell>{item.sender}</TableCell>
 						<TableCell style="width: 100%;">{item.content}</TableCell>
-						<TableCell
-							><Icon class="material-icons">{item.read ? 'check' : 'close'}</Icon></TableCell
-						>
+						<TableCell>
+							{#if item.read}
+								<Icon class="material-icons green">check</Icon>
+							{:else}
+								<Icon class="material-icons red">close</Icon>
+							{/if}
+						</TableCell>
 					</Row>
 				{/each}
 			</Body>
 
 			<Pagination slot="paginate">
 				<svelte:fragment slot="rowsPerPage">
-					<Label>Rows Per Page</Label>
-					<Select variant="outlined" bind:value={rowsPerPage} noLabel>
-						<Option value={10}>10</Option>
-						<Option value={25}>25</Option>
-						<Option value={100}>100</Option>
-					</Select>
+					<Label>Rows per page:</Label>
+					{#if javascriptOn}
+						<Select variant="outlined" bind:value={rowsPerPage} noLabel>
+							<Option value={10}>10</Option>
+							<Option value={25}>25</Option>
+							<Option value={100}>100</Option>
+						</Select>
+					{:else}
+						<Label>10</Label>
+					{/if}
 				</svelte:fragment>
+
 				<svelte:fragment slot="total">
 					{start + 1}-{end} of {items.length}
 				</svelte:fragment>
@@ -118,14 +132,14 @@
 					class="material-icons"
 					action="prev-page"
 					title="Prev page"
-					on:click={() => currentPage--}
+					href="/inbox?page={currentPage - 1}"
 					disabled={currentPage === 0}>chevron_left</IconButton
 				>
 				<IconButton
 					class="material-icons"
 					action="next-page"
 					title="Next page"
-					on:click={() => currentPage++}
+					href="/inbox?page={currentPage + 1}"
 					disabled={currentPage === lastPage}>chevron_right</IconButton
 				>
 				<IconButton
@@ -139,3 +153,13 @@
 		</DataTable>
 	</Cell>
 </LayoutGrid>
+
+<style>
+	:global(.mdc-text-field__icon.red) {
+		color: red !important;
+	}
+
+	:global(.mdc-text-field__icon.green) {
+		color: green !important;
+	}
+</style>
