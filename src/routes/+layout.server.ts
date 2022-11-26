@@ -1,4 +1,4 @@
-import { getUnreadMessageCount } from '$lib/core/api';
+import { getUnreadMessageCount } from '$lib/core/data/api';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {

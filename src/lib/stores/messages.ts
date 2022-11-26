@@ -1,7 +1,7 @@
-import { getUnreadMessageCount, getUserNameByEmail } from '$lib/core/api';
+import { getUnreadMessageCount, getUserNameByEmail } from '$lib/core/data/api';
 import { trimIfNecessary } from '$lib/core/helpers/stringHelper';
 import { notifySuccess } from '$lib/core/notify';
-import supabase from '$lib/core/supabase';
+import supabase from '$lib/core/data/supabase';
 import { writable } from 'svelte/store';
 
 export let unreadMessages = writable(0);

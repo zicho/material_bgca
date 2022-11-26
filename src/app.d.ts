@@ -9,7 +9,7 @@ declare namespace App {
 	}
 	interface PageData {
 		user: import('@supabase/supabase-js').User | null;
-		userinfo?: { username: string; } | null;
+		userinfo: { username: string; } | null;
 	}
 	// interface Error {}
 	// interface Platform {}

@@ -1,4 +1,4 @@
-import { getProfile, sendMessage, userExists } from "$lib/core/api";
+import { getProfile, sendMessage, userExists } from "$lib/core/data/api";
 import { error, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 

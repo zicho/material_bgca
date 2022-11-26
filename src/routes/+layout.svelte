@@ -39,7 +39,7 @@
 					</Section>
 					<Section align="end" toolbar>
 						{#if data.user}
-							<Button on:click={() => $unreadMessages++}>
+							<Button href="/">
 								<Icon class="material-icons">home</Icon>
 								<Label>Home</Label>
 							</Button>
@@ -53,7 +53,7 @@
 								<Icon class="material-icons">notifications</Icon>
 								<Label>0</Label>
 							</Button>
-							<Button>
+							<Button href="inbox">
 								<Icon class="material-icons">mail</Icon>
 								<Label>{unreadMessageCount}</Label>
 							</Button>

@@ -1,4 +1,4 @@
-import supabase from './lib/core/supabase';
+import supabase from './lib/core/data/supabase';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {

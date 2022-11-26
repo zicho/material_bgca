@@ -1,4 +1,4 @@
-import { getProfile, updateProfileDescription } from "$lib/core/api";
+import { getProfile, updateProfileDescription } from "$lib/core/data/api";
 import { error, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
