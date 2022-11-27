@@ -42,20 +42,27 @@
 
 	let sort: keyof IMessage = data.sortQuery ? data.sortQuery : 'sender';
 	let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
+	let loading: boolean = false;
 
 	const next_page = async () => {
+		loading = true;
 		currentPage = currentPage + 1;
 		items = await getMessages(currentPage, data.userinfo?.username);
+		loading = false;
 	};
 
 	const prev_page = async () => {
+		loading = true;
 		currentPage = currentPage - 1;
 		items = await getMessages(currentPage, data.userinfo?.username);
+		loading = false;
 	};
 
 	const goto_page = async (page: number) => {
+		loading = true;
 		currentPage = page;
 		items = await getMessages(page, data.userinfo?.username);
+		loading = false;
 	};
 
 	items = handleSort(items, sort, sortDirection);
@@ -82,10 +89,6 @@
 		>
 			<Head>
 				<Row>
-					<TableCell columnId="id">
-						<Label>Id</Label>
-						<IconButton class="material-icons">arrow_upward</IconButton>
-					</TableCell>
 					<TableCell columnId="sender">
 						<Label>From</Label>
 						<IconButton class="material-icons">arrow_upward</IconButton>
@@ -104,7 +107,6 @@
 			<Body>
 				{#each slice as item}
 					<Row>
-						<TableCell>{item.id}</TableCell>
 						<TableCell>{item.sender}</TableCell>
 						<TableCell style="width: 100%;">{item.content}</TableCell>
 						<TableCell>
@@ -142,7 +144,7 @@
 						class="material-icons"
 						action="first-page"
 						title="First page"
-						disabled={currentPage === 0}>first_page</IconButton
+						disabled={currentPage === 0 || loading}>first_page</IconButton
 					>
 				</form>
 
@@ -152,7 +154,7 @@
 						class="material-icons"
 						action="next-page"
 						title="Next page"
-						disabled={data.firstPage}>chevron_left</IconButton
+						disabled={data.firstPage || loading}>chevron_left</IconButton
 					>
 				</form>
 				<form method="POST" action="?/change_page" use:enhance={next_page}>
@@ -161,7 +163,7 @@
 						class="material-icons"
 						action="next-page"
 						title="Next page"
-						disabled={data.lastPage}>chevron_right</IconButton
+						disabled={data.lastPage || loading}>chevron_right</IconButton
 					>
 				</form>
 
@@ -176,7 +178,7 @@
 						action="last-page"
 						title="Last page"
 						on:click={() => (data.pageNo = lastPage)}
-						disabled={data.lastPage}>last_page</IconButton
+						disabled={data.lastPage || loading}>last_page</IconButton
 					>
 				</form>
 			</Pagination>
