@@ -22,21 +22,20 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		messages = handleSort(messages, sort);
 	}
 
-	console.dir("page " + +pageNo);
-
 	return {
 		messages,
 		pageNo: +pageNo,
-		sortQuery: sort ? sort : 'sender'
+		sortQuery: sort ? sort : 'sender',
+        firstPage: pageNo == 0,
+        lastPage: messages.length != 10,
 	};
 };
 
 /** @type {import('./$types').Actions} */
 export const actions: import('./$types').Actions = {
-	next_page: async ({ request, cookies }: any) => {
+	change_page: async ({ request, cookies }: any) => {
 		const formData = await request.formData();
 		const page_no = formData.get('page_no');
-		console.dir("post: " + +page_no);
 		throw redirect(302, `/inbox?page=${+page_no}`);
-	}
+	},
 };

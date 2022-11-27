@@ -24,7 +24,7 @@
 
 	let javascriptOn = false;
 
-	onMount(() => ((javascriptOn = true), console.dir(data.pageNo)));
+	onMount(() => ((javascriptOn = true)));
 
 	let items: IMessage[] = data.messages;
 	let rowsPerPage = 10;
@@ -43,8 +43,13 @@
 	let sort: keyof IMessage = data.sortQuery ? data.sortQuery : 'sender';
 	let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
 
-	const update = async () => {
+	const next_page = async () => {
 		currentPage = currentPage + 1;
+		items = await getMessages(currentPage, data.userinfo?.username);
+	};
+
+	const prev_page = async () => {
+		currentPage = currentPage - 1;
 		items = await getMessages(currentPage, data.userinfo?.username);
 	};
 
@@ -128,16 +133,15 @@
 					on:click={() => (data.pageNo = 0)}
 					disabled={data.pageNo === 0}>first_page</IconButton
 				>
-				<IconButton
-					class="material-icons"
-					action="prev-page"
-					title="Prev page"
-					on:click={() => data.pageNo--}
-					disabled={data.pageNo == 0}>chevron_left</IconButton
-				>
-				<form method="POST" action="?/next_page" use:enhance={update}>
+				<form method="POST" action="?/change_page" use:enhance={prev_page}>
+					<input type="hidden" name="page_no" value={currentPage - 1} />
+					<IconButton class="material-icons" action="next-page" title="Next page" disabled={data.firstPage}
+						>chevron_left</IconButton
+					>
+				</form>
+				<form method="POST" action="?/change_page" use:enhance={next_page}>
 					<input type="hidden" name="page_no" value={currentPage + 1} />
-					<IconButton class="material-icons" action="next-page" title="Next page"
+					<IconButton class="material-icons" action="next-page" title="Next page" disabled={data.lastPage}
 						>chevron_right</IconButton
 					>
 				</form>
