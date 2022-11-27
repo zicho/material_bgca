@@ -55,8 +55,29 @@ export async function getUserNameByEmail(email: string) {
 	return data?.username;
 }
 
-export async function getMessages(username?: string): Promise<IMessage[]> {
-	if (!username) return [];
-	const { data } = await supabase.from('messages').select('*').eq('recipient', username);
+const getPagination = (page: number, size: number) => {
+	
+	size--; // fix so limit returns properly... otherwise you get 11 instead of 10, for example. not sure why ¯\_(ツ)_/¯
+	const val = Number(page);
+	
+	if (Number.isNaN(val)) {
+		page = 0;
+	}
+
+	const limit = size ? +size : 3;
+	const from = page ? page * limit : 0;
+	const to = page ? from + size : size;
+
+	return { from, to };
+};
+
+export async function getMessages(page: number = 0, username?: string): Promise<IMessage[]> {
+	const { from, to } = getPagination(page, 10);
+	const { data } = await supabase
+		.from('messages')
+		.select('*')
+		.order('id', { ascending: true })
+		.range(from, to);
+
 	return data as IMessage[];
 }

@@ -16,41 +16,41 @@
 	import type { IMessage } from '$lib/core/interfaces/IMessage';
 	import Icon from '@smui/textfield/icon';
 	import { onMount } from 'svelte';
+	import { handleSort } from '$lib/core/helpers/tableSorter';
+	import { enhance } from '$app/forms';
+	import { getMessages } from '$lib/core/data/api';
 
 	export let data: PageData;
 
 	let javascriptOn = false;
 
-	onMount(() => (javascriptOn = true));
+	onMount(() => ((javascriptOn = true), console.dir(data.pageNo)));
 
 	let items: IMessage[] = data.messages;
 	let rowsPerPage = 10;
-	let currentPage = data.pageNo;
 
-	$: start = currentPage * rowsPerPage;
+	$: start = data.pageNo * rowsPerPage;
 	$: end = Math.min(start + rowsPerPage, items.length);
 	$: slice = items.slice(start, end);
 	$: lastPage = Math.max(Math.ceil(items.length / rowsPerPage) - 1, 0);
 
-	$: if (currentPage > lastPage) {
-		currentPage = lastPage;
+	$: if (data.pageNo > lastPage) {
+		data.pageNo = lastPage;
 	}
 
-	let sort: keyof IMessage = 'sender';
+	let currentPage = data.pageNo;
+
+	let sort: keyof IMessage = data.sortQuery ? data.sortQuery : 'sender';
 	let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
 
-	function handleSort() {
-		items.sort((a, b) => {
-			const [aVal, bVal] = [a[sort], b[sort]][
-				sortDirection === 'ascending' ? 'slice' : 'reverse'
-			]();
-			if (typeof aVal === 'string' && typeof bVal === 'string') {
-				return aVal.localeCompare(bVal);
-			}
-			return Number(aVal) - Number(bVal);
-		});
-		items = items;
-	}
+	const update = async () => {
+		currentPage = currentPage + 1;
+		items = await getMessages(currentPage, data.userinfo?.username);
+	};
+
+	items = handleSort(items, sort, sortDirection);
+
+	const updateSort = () => (items = handleSort(items, sort, sortDirection));
 </script>
 
 <svelte:head>
@@ -66,7 +66,7 @@
 			sortable
 			bind:sort
 			bind:sortDirection
-			on:SMUIDataTable:sorted={handleSort}
+			on:SMUIDataTable:sorted={updateSort}
 			table$aria-label="User list"
 			style="width: 100%;"
 		>
@@ -125,29 +125,28 @@
 					class="material-icons"
 					action="first-page"
 					title="First page"
-					on:click={() => (currentPage = 0)}
-					disabled={currentPage === 0}>first_page</IconButton
+					on:click={() => (data.pageNo = 0)}
+					disabled={data.pageNo === 0}>first_page</IconButton
 				>
 				<IconButton
 					class="material-icons"
 					action="prev-page"
 					title="Prev page"
-					href="/inbox?page={currentPage - 1}"
-					disabled={currentPage === 0}>chevron_left</IconButton
+					on:click={() => data.pageNo--}
+					disabled={data.pageNo == 0}>chevron_left</IconButton
 				>
-				<IconButton
-					class="material-icons"
-					action="next-page"
-					title="Next page"
-					href="/inbox?page={currentPage + 1}"
-					disabled={currentPage === lastPage}>chevron_right</IconButton
-				>
+				<form method="POST" action="?/next_page" use:enhance={update}>
+					<input type="hidden" name="page_no" value={currentPage + 1} />
+					<IconButton class="material-icons" action="next-page" title="Next page"
+						>chevron_right</IconButton
+					>
+				</form>
 				<IconButton
 					class="material-icons"
 					action="last-page"
 					title="Last page"
-					on:click={() => (currentPage = lastPage)}
-					disabled={currentPage === lastPage}>last_page</IconButton
+					on:click={() => (data.pageNo = lastPage)}
+					disabled={data.pageNo === lastPage}>last_page</IconButton
 				>
 			</Pagination>
 		</DataTable>
