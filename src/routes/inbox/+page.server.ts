@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 
     let lastPage = Math.max(Math.ceil(totalMessages / 10) - 1, 0);
 
-    console.dir("last page: " + lastPage)
+    // todo: bug: pagination returns last item from previous page
 
 	return {
 		messages,
