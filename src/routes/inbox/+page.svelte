@@ -124,10 +124,11 @@
 				<svelte:fragment slot="rowsPerPage">
 					<Label>Rows per page:</Label>
 					{#if javascriptOn}
-						<Select variant="outlined" bind:value={rowsPerPage} noLabel>
-							<Option value={10}>10</Option>
+						<Select disabled variant="outlined" bind:value={rowsPerPage} noLabel>
+							<Option value={10}>Not yet implemented</Option>
+							<!-- <Option value={10}>10</Option>
 							<Option value={25}>25</Option>
-							<Option value={100}>100</Option>
+							<Option value={100}>100</Option> -->
 						</Select>
 					{:else}
 						<Label>10</Label>
@@ -135,7 +136,7 @@
 				</svelte:fragment>
 
 				<svelte:fragment slot="total">
-					{start + 1}-{end} of {items.length}
+					{start + 1}-{end} of {data.totalMessages}
 				</svelte:fragment>
 
 				<form method="POST" action="?/change_page" use:enhance={() => goto_page(0)}>
@@ -152,9 +153,9 @@
 					<input type="hidden" name="page_no" value={currentPage - 1} />
 					<IconButton
 						class="material-icons"
-						action="next-page"
-						title="Next page"
-						disabled={data.firstPage || loading}>chevron_left</IconButton
+						action="prev-page"
+						title="Previous page"
+						disabled={data.onFirstPage || loading}>chevron_left</IconButton
 					>
 				</form>
 				<form method="POST" action="?/change_page" use:enhance={next_page}>
@@ -163,22 +164,22 @@
 						class="material-icons"
 						action="next-page"
 						title="Next page"
-						disabled={data.lastPage || loading}>chevron_right</IconButton
+						disabled={data.onLastPage || loading}>chevron_right</IconButton
 					>
 				</form>
 
 				<form
 					method="POST"
 					action="?/change_page"
-					use:enhance={() => goto_page(data.lastPageNumber)}
+					use:enhance={() => goto_page(data.lastPage)}
 				>
-					<input type="hidden" name="page_no" value={data.lastPageNumber} />
+					<input type="hidden" name="page_no" value={data.lastPage} />
 					<IconButton
 						class="material-icons"
 						action="last-page"
 						title="Last page"
 						on:click={() => (data.pageNo = lastPage)}
-						disabled={data.lastPage || loading}>last_page</IconButton
+						disabled={data.onLastPage || loading}>last_page</IconButton
 					>
 				</form>
 			</Pagination>

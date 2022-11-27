@@ -53,7 +53,7 @@
 								<Icon class="material-icons">notifications</Icon>
 								<Label>0</Label>
 							</Button>
-							<Button href="inbox">
+							<Button href="/inbox">
 								<Icon class="material-icons">mail</Icon>
 								<Label>{unreadMessageCount}</Label>
 							</Button>

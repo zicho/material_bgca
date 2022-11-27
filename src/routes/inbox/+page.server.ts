@@ -31,9 +31,10 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		messages,
 		pageNo: +pageNo,
 		sortQuery: sort ? sort : 'sender',
-        firstPage: pageNo == 0,
-        lastPage: messages.length != 10,
-        lastPageNumber: lastPage
+        onFirstPage: pageNo == 0,
+        onLastPage: messages.length != 10,
+        lastPage,
+        totalMessages
 	};
 };
 
