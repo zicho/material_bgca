@@ -45,6 +45,15 @@ export async function getUnreadMessageCount(username: string): Promise<number> {
 	return data?.length as number;
 }
 
+export async function getInboxTotalMessageCount(username: string): Promise<number> {
+	const { data } = await supabase
+		.from('messages')
+		.select('*')
+		.eq('recipient', username);
+
+	return data?.length as number;
+}
+
 export async function getUserNameByEmail(email: string) {
 	let { data, error } = await supabase
 		.from('profiles')
@@ -77,7 +86,9 @@ export async function getMessages(page: number = 0, username?: string): Promise<
 		.from('messages')
 		.select('*')
 		.order('id', { ascending: true })
+		.eq('recipient', username)
 		.range(from, to);
+		
 
 	return data as IMessage[];
 }

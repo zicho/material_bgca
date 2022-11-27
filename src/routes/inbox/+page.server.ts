@@ -1,4 +1,4 @@
-import { getMessages } from '$lib/core/data/api';
+import { getInboxTotalMessageCount, getMessages } from '$lib/core/data/api';
 import { handleSort } from '$lib/core/helpers/tableSorter';
 import type { IMessage } from '$lib/core/interfaces/IMessage';
 import { redirect } from '@sveltejs/kit';
@@ -17,10 +17,15 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 	}
 
 	let messages = await getMessages(pageNo, locals.userinfo?.username);
+    let totalMessages = await getInboxTotalMessageCount(locals.userinfo?.username as string);
 
 	if (sort) {
 		messages = handleSort(messages, sort);
 	}
+
+    let lastPage = Math.max(Math.ceil(totalMessages / 10) - 1, 0);
+
+    console.dir("last page: " + lastPage)
 
 	return {
 		messages,
@@ -28,6 +33,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		sortQuery: sort ? sort : 'sender',
         firstPage: pageNo == 0,
         lastPage: messages.length != 10,
+        lastPageNumber: lastPage
 	};
 };
 
