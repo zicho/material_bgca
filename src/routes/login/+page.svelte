@@ -52,7 +52,7 @@
 						}}
 					>
 						<div class="mdc-typography--subtitle1 mr-auto">Email</div>
-						<Textfield variant="outlined" required value="" class="mb-sm" input$name="email">
+						<Textfield variant="outlined" class="mb-sm" required value={form?.email ?? ''} input$name="email">
 							<Icon class="material-icons" slot="leadingIcon">mail</Icon>
 						</Textfield>
 						<div class="mdc-typography--subtitle1 mr-auto">Password</div>
