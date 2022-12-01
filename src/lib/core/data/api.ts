@@ -85,7 +85,9 @@ export async function getMessages(page: number = 0, username?: string): Promise<
 	const { data } = await supabase
 		.from('messages')
 		.select('*')
+		.order('read', { ascending: true })
 		.order('id', { ascending: true })
+		
 		.eq('recipient', username)
 		.range(from, to);
 		

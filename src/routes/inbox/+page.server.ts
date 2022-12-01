@@ -45,4 +45,10 @@ export const actions: import('./$types').Actions = {
 		const page_no = formData.get('page_no');
 		throw redirect(302, `/inbox?page=${+page_no}`);
 	},
+	delete: async ({ request, cookies }: any) => {
+		const formData = await request.formData();
+		console.dir(formData)
+		const page_no = formData.get('id');
+		console.dir(page_no)
+	},
 };

@@ -25,11 +25,11 @@ export const actions: import('./$types').Actions = {
 			!username ||
 			!password
 		) {
-			return invalid(400, { message: 'Incorrect data in input fields' });
+			return invalid(400, { message: 'Incorrect data in input fields', username, email });
 		}
 
 		if (password != password_confirm) {
-			return invalid(400, { message: 'Passwords do not match' });
+			return invalid(400, { message: 'Passwords do not match', username, email });
 		}
 
 		// todo: validate username
@@ -40,7 +40,7 @@ export const actions: import('./$types').Actions = {
 			.eq('username', username)
 
 		if (userData?.length != 0) {
-			return invalid(400, { message: 'Username taken' });
+			return invalid(400, { message: 'Username taken', username, email });
 		
 		} else if (userError) {
 			return invalid(400, { message: userError?.message });
@@ -65,7 +65,7 @@ export const actions: import('./$types').Actions = {
 			});
 			throw redirect(302, '/');
 		} else {
-			return invalid(400, { message: error?.message });
+			return invalid(400, { message: error?.message, username, email });
 		}
 	}
 };

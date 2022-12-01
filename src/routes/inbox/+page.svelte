@@ -10,6 +10,7 @@
 		Pagination,
 		SortValue
 	} from '@smui/data-table';
+	import Checkbox from '@smui/checkbox';
 	import Select, { Option } from '@smui/select';
 	import IconButton from '@smui/icon-button';
 	import { Label } from '@smui/common';
@@ -89,17 +90,20 @@
 		>
 			<Head>
 				<Row>
+					<TableCell checkbox>
+						<Checkbox />
+					</TableCell>
 					<TableCell columnId="sender">
 						<Label>From</Label>
-						<IconButton class="material-icons">arrow_upward</IconButton>
+						{#if javascriptOn}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
 					</TableCell>
 					<TableCell columnId="content">
 						<Label>Content</Label>
-						<IconButton class="material-icons">arrow_upward</IconButton>
+						{#if javascriptOn} <IconButton class="material-icons">arrow_upward</IconButton>{/if}
 					</TableCell>
 					<TableCell columnId="read">
 						<Label>Read</Label>
-						<IconButton class="material-icons">arrow_upward</IconButton>
+						{#if javascriptOn}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
 					</TableCell>
 				</Row>
 			</Head>
@@ -107,6 +111,9 @@
 			<Body>
 				{#each slice as item}
 					<Row>
+						<TableCell checkbox>
+							<Checkbox input$id={String(item.id)} value={item} valueKey={item.content} />
+						</TableCell>
 						<TableCell>{item.sender}</TableCell>
 						<TableCell style="width: 100%;">{item.content}</TableCell>
 						<TableCell>
@@ -125,7 +132,7 @@
 					<Label>Rows per page:</Label>
 					{#if javascriptOn}
 						<Select disabled variant="outlined" bind:value={rowsPerPage} noLabel>
-							<Option value={10}>Not yet implemented</Option>
+							<Option value={10}>10</Option>
 							<!-- <Option value={10}>10</Option>
 							<Option value={25}>25</Option>
 							<Option value={100}>100</Option> -->
@@ -136,7 +143,7 @@
 				</svelte:fragment>
 
 				<svelte:fragment slot="total">
-					{start + 1}-{end} of {data.totalMessages}
+					Page {currentPage + 1} of {data.lastPage + 1}
 				</svelte:fragment>
 
 				<form method="POST" action="?/change_page" use:enhance={() => goto_page(0)}>
@@ -168,11 +175,7 @@
 					>
 				</form>
 
-				<form
-					method="POST"
-					action="?/change_page"
-					use:enhance={() => goto_page(data.lastPage)}
-				>
+				<form method="POST" action="?/change_page" use:enhance={() => goto_page(data.lastPage)}>
 					<input type="hidden" name="page_no" value={data.lastPage} />
 					<IconButton
 						class="material-icons"

@@ -33,7 +33,7 @@
 							variant="outlined"
 							type="text"
 							required
-							value=""
+							value={form?.username ?? ''}
 							class="mb-sm"
 							input$name="username"
 						>
@@ -45,7 +45,7 @@
 							variant="outlined"
 							type="email"
 							required
-							value=""
+							value={form?.email ?? ''}
 							class="mb-sm"
 							input$name="email"
 						>

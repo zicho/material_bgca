@@ -31,7 +31,7 @@ export const actions: import('./$types').Actions = {
 
 			throw redirect(302, '/');
 		} else {
-			return invalid(400, { message: error?.message });
+			return invalid(400, { message: error?.message, email: email });
 		}
 	}
 };
