@@ -20,7 +20,7 @@ export async function subscribeToMessages(username: string) {
 
 	supabase
 		.channel('messages')
-		.on('postgres_changes', { event: '*', schema: '*' }, async (payload: any) => {
+		.on('postgres_changes', { event: 'INSERT', schema: '*' }, async (payload: any) => {
 			if (payload.new.recipient == _username) {
 				unreadMessages.set((await getUnreadMessageCount(_username)) as number);
 				notifySuccess(

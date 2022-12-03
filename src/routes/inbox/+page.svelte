@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
-
 	import DataTable, {
 		Cell as TableCell,
 		Head,
@@ -20,19 +19,28 @@
 	import { handleSort } from '$lib/core/helpers/tableSorter';
 	import { enhance } from '$app/forms';
 	import { getMessages } from '$lib/core/data/api';
+	import Button from '@smui/button';
+	import { unreadMessages } from '$lib/stores/messages';
 
 	export let data: PageData;
+
+	const updateState = async () => {};
 
 	let javascriptOn = false;
 
 	onMount(() => (javascriptOn = true));
 
-	let items: IMessage[] = data.messages;
+	let items = data.messages;
+
+	$: {
+		unreadMessages.set(data.unreadMessages);
+	}
+
 	let rowsPerPage = 10;
 
 	$: start = data.pageNo * rowsPerPage;
 	$: end = Math.min(start + rowsPerPage, items.length);
-	$: slice = items.slice(start, end);
+	$: slice = data.messages.slice(start, end);
 	$: lastPage = Math.max(Math.ceil(items.length / rowsPerPage) - 1, 0);
 
 	$: if (data.pageNo > lastPage) {
@@ -87,6 +95,7 @@
 			on:SMUIDataTable:sorted={updateSort}
 			table$aria-label="User list"
 			style="width: 100%;"
+			href="/"
 		>
 			<Head>
 				<Row>
@@ -105,17 +114,19 @@
 						<Label>Read</Label>
 						{#if javascriptOn}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
 					</TableCell>
+					<TableCell columnId="delete" />
+					<TableCell columnId="mark_read" />
 				</Row>
 			</Head>
 
-			<Body>
+			<Body target="/">
 				{#each slice as item}
-					<Row>
+					<Row href="/">
 						<TableCell checkbox>
 							<Checkbox input$id={String(item.id)} value={item} valueKey={item.content} />
 						</TableCell>
 						<TableCell>{item.sender}</TableCell>
-						<TableCell style="width: 100%;">{item.content}</TableCell>
+						<TableCell style="width: 100%;"><a href="/">{item.content}</a></TableCell>
 						<TableCell>
 							{#if item.read}
 								<Icon class="material-icons green">check</Icon>
@@ -123,12 +134,34 @@
 								<Icon class="material-icons red">close</Icon>
 							{/if}
 						</TableCell>
+						<TableCell>
+							<form action="?/delete" method="post" use:enhance>
+								<input type="hidden" name="id" value={item.id} />
+								<Button>
+									<Icon class="material-icons grey">delete</Icon>
+								</Button>
+							</form>
+						</TableCell>
+						<TableCell>
+							<form action="?/mark_read" method="post" use:enhance={updateState}>
+								<input type="hidden" name="id" value={item.id} />
+								<Button disabled={item.read}>
+									<Icon class="material-icons grey">{item.read ? 'drafts' : 'mark_email_read'}</Icon
+									>
+								</Button>
+							</form>
+						</TableCell>
 					</Row>
 				{/each}
 			</Body>
 
 			<Pagination slot="paginate">
 				<svelte:fragment slot="rowsPerPage">
+					<div style="position: absolute; left: 0" class="ml-xs">
+						<Button>Delete marked</Button>
+						<Button>Mark as read</Button>
+					</div>
+
 					<Label>Rows per page:</Label>
 					{#if javascriptOn}
 						<Select disabled variant="outlined" bind:value={rowsPerPage} noLabel>
@@ -190,12 +223,18 @@
 	</Cell>
 </LayoutGrid>
 
-<style>
+<style lang="scss">
+	@use '@material/theme/color-palette';
+
 	:global(.mdc-text-field__icon.red) {
-		color: red !important;
+		color: color-palette.$red-900 !important;
 	}
 
 	:global(.mdc-text-field__icon.green) {
-		color: green !important;
+		color: color-palette.$green-900 !important;
+	}
+
+	:global(.mdc-text-field__icon.grey) {
+		color: color-palette.$grey-600 !important;
 	}
 </style>

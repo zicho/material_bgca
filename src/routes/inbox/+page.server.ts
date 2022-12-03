@@ -1,4 +1,4 @@
-import { getInboxTotalMessageCount, getMessages } from '$lib/core/data/api';
+import { deleteMessages, markMessagesAsRead, getInboxTotalMessageCount, getMessages, getUnreadMessageCount } from '$lib/core/data/api';
 import { handleSort } from '$lib/core/helpers/tableSorter';
 import type { IMessage } from '$lib/core/interfaces/IMessage';
 import { redirect } from '@sveltejs/kit';
@@ -9,6 +9,8 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		throw redirect(302, '/login');
 	}
 
+	console.log("load")
+
 	let pageNo = (url.searchParams.get('page') as unknown) as number;
 	let sort = (url.searchParams.get('sort') as string) as keyof IMessage;
 
@@ -18,6 +20,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 
 	let messages = await getMessages(pageNo, locals.userinfo?.username);
     let totalMessages = await getInboxTotalMessageCount(locals.userinfo?.username as string);
+	let unreadMessages = await getUnreadMessageCount(locals.userinfo?.username as string);
 
 	if (sort) {
 		messages = handleSort(messages, sort);
@@ -26,7 +29,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
     let lastPage = Math.max(Math.ceil(totalMessages / 10) - 1, 0);
 
     // todo: bug: pagination returns last item from previous page
-
+	
 	return {
 		messages,
 		pageNo: +pageNo,
@@ -34,7 +37,8 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
         onFirstPage: pageNo == 0,
         onLastPage: messages.length != 10,
         lastPage,
-        totalMessages
+        totalMessages,
+		unreadMessages
 	};
 };
 
@@ -47,8 +51,16 @@ export const actions: import('./$types').Actions = {
 	},
 	delete: async ({ request, cookies }: any) => {
 		const formData = await request.formData();
-		console.dir(formData)
-		const page_no = formData.get('id');
-		console.dir(page_no)
+		
+		const id = formData.get('id');
+
+		await deleteMessages([id])
+	},
+	mark_read: async ({ request, cookies }: any) => {
+		const formData = await request.formData();
+		
+		const id = formData.get('id');
+
+		await markMessagesAsRead([id])
 	},
 };

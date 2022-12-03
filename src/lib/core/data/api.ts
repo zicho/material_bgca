@@ -1,6 +1,7 @@
 import supabase from './supabase';
 import type { IProfile } from '../interfaces/IProfile';
 import type { IMessage } from '../interfaces/IMessage';
+import { unreadMessages } from '$lib/stores/messages';
 
 export async function getProfile(username: string): Promise<IProfile> {
 	const { data, error } = await supabase
@@ -46,10 +47,7 @@ export async function getUnreadMessageCount(username: string): Promise<number> {
 }
 
 export async function getInboxTotalMessageCount(username: string): Promise<number> {
-	const { data } = await supabase
-		.from('messages')
-		.select('*')
-		.eq('recipient', username);
+	const { data } = await supabase.from('messages').select('*').eq('recipient', username);
 
 	return data?.length as number;
 }
@@ -65,10 +63,9 @@ export async function getUserNameByEmail(email: string) {
 }
 
 const getPagination = (page: number, size: number) => {
-	
 	size--; // fix so limit returns properly... otherwise you get 11 instead of 10, for example. not sure why ¯\_(ツ)_/¯
 	const val = Number(page);
-	
+
 	if (Number.isNaN(val)) {
 		page = 0;
 	}
@@ -87,10 +84,16 @@ export async function getMessages(page: number = 0, username?: string): Promise<
 		.select('*')
 		.order('read', { ascending: true })
 		.order('id', { ascending: true })
-		
 		.eq('recipient', username)
 		.range(from, to);
-		
 
 	return data as IMessage[];
+}
+
+export async function deleteMessages(ids: number[]) {
+	const { data, error } = await supabase.from('messages').delete().in('id', ids);
+}
+
+export async function markMessagesAsRead(ids: number[]) {
+	const { data, error } = await supabase.from('messages').update({ read: true }).in('id', ids);
 }
