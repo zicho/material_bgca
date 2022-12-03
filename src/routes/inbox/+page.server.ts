@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		messages = handleSort(messages, sort);
 	}
 
-    let lastPage = Math.max(Math.ceil(totalMessages / 10) - 1, 0);
+    let lastPage = Math.max(Math.ceil(totalMessages / 10), 0);
 
     // todo: bug: pagination returns last item from previous page
 	
