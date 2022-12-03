@@ -120,20 +120,25 @@
 				<Row>
 					{#if javascriptOn}
 						<TableCell checkbox>
-							<Checkbox disabled={items.length == 0} checked={!allSelected} />
+							<Checkbox disabled={items.length == 0} checked={allSelected} />
 						</TableCell>
 					{/if}
 					<TableCell columnId="sender">
 						<Label>From</Label>
-						{#if javascriptOn && items.length != 0}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
+						{#if javascriptOn && items.length != 0}<IconButton class="material-icons"
+								>arrow_upward</IconButton
+							>{/if}
 					</TableCell>
 					<TableCell columnId="content">
 						<Label>Content</Label>
-						{#if javascriptOn && items.length != 0} <IconButton class="material-icons">arrow_upward</IconButton>{/if}
+						{#if javascriptOn && items.length != 0}
+							<IconButton class="material-icons">arrow_upward</IconButton>{/if}
 					</TableCell>
 					<TableCell columnId="read">
 						<Label>Read</Label>
-						{#if javascriptOn && items.length != 0}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
+						{#if javascriptOn && items.length != 0}<IconButton class="material-icons"
+								>arrow_upward</IconButton
+							>{/if}
 					</TableCell>
 					<TableCell columnId="delete" />
 					<TableCell columnId="mark_read" />
@@ -194,8 +199,10 @@
 				<svelte:fragment slot="rowsPerPage">
 					{#if javascriptOn}
 						<div style="position: absolute; left: 0" class="ml-xs">
-							<Button on:click={deleteMany}>Delete marked</Button>
-							<Button on:click={readMany}>Mark as read</Button>
+							<Button disabled={selectedItems.length == 0} on:click={deleteMany}
+								>Delete marked</Button
+							>
+							<Button disabled={selectedItems.length == 0} on:click={readMany}>Mark as read</Button>
 						</div>
 					{/if}
 
