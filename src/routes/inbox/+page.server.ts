@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		throw redirect(302, '/login');
 	}
 
-	console.log("load")
+	let limit = 10;
 
 	let pageNo = (url.searchParams.get('page') as unknown) as number;
 	let sort = (url.searchParams.get('sort') as string) as keyof IMessage;
@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		pageNo = 0;
 	}
 
-	let messages = await getMessages(pageNo, locals.userinfo?.username);
+	let messages = await getMessages(pageNo, limit, locals.userinfo?.username);
     let totalMessages = await getInboxTotalMessageCount(locals.userinfo?.username as string);
 	let unreadMessages = await getUnreadMessageCount(locals.userinfo?.username as string);
 
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		messages = handleSort(messages, sort);
 	}
 
-    let lastPage = Math.max(Math.ceil(totalMessages / 10), 0);
+    let lastPage = Math.max(Math.ceil(totalMessages / limit), 0);
 
     // todo: bug: pagination returns last item from previous page
 	
@@ -35,10 +35,11 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		pageNo: +pageNo,
 		sortQuery: sort ? sort : 'sender',
         onFirstPage: pageNo == 0,
-        onLastPage: messages.length != 10,
+        onLastPage: messages.length != limit,
         lastPage,
         totalMessages,
-		unreadMessages
+		unreadMessages,
+		limit
 	};
 };
 

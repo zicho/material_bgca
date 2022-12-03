@@ -18,13 +18,12 @@
 	import { onMount } from 'svelte';
 	import { handleSort } from '$lib/core/helpers/tableSorter';
 	import { enhance } from '$app/forms';
-	import { getMessages } from '$lib/core/data/api';
+	import { deleteMessages, getMessages, markMessagesAsRead } from '$lib/core/data/api';
 	import Button from '@smui/button';
 	import { unreadMessages } from '$lib/stores/messages';
+	import { invalidateAll } from '$app/navigation';
 
 	export let data: PageData;
-
-	const updateState = async () => {};
 
 	let javascriptOn = false;
 
@@ -32,11 +31,11 @@
 
 	let items = data.messages;
 
+	let rowsPerPage = data.limit;
+
 	$: {
 		unreadMessages.set(data.unreadMessages);
 	}
-
-	let rowsPerPage = 10;
 
 	$: start = data.pageNo * rowsPerPage;
 	$: end = Math.min(start + rowsPerPage, items.length);
@@ -56,25 +55,39 @@
 	const next_page = async () => {
 		loading = true;
 		currentPage = currentPage + 1;
-		items = await getMessages(currentPage, data.userinfo?.username);
+		items = await getMessages(currentPage, rowsPerPage, data.userinfo?.username);
 		loading = false;
 	};
 
 	const prev_page = async () => {
 		loading = true;
 		currentPage = currentPage - 1;
-		items = await getMessages(currentPage, data.userinfo?.username);
+		items = await getMessages(currentPage, rowsPerPage, data.userinfo?.username);
 		loading = false;
 	};
 
 	const goto_page = async (page: number) => {
 		loading = true;
 		currentPage = page;
-		items = await getMessages(page, data.userinfo?.username);
+		items = await getMessages(page, rowsPerPage, data.userinfo?.username);
 		loading = false;
 	};
 
+	const deleteMany = async () => {
+		let ids = selectedItems.map((x) => x.id);
+		await deleteMessages(ids);
+		invalidateAll();
+	};
+
+	const readMany = async () => {
+		let ids = selectedItems.map((x) => x.id);
+		await markMessagesAsRead(ids);
+		invalidateAll();
+	};
+
 	items = handleSort(items, sort, sortDirection);
+
+	let selectedItems: IMessage[] = [];
 
 	const updateSort = () => (items = handleSort(items, sort, sortDirection));
 </script>
@@ -99,9 +112,11 @@
 		>
 			<Head>
 				<Row>
-					<TableCell checkbox>
-						<Checkbox />
-					</TableCell>
+					{#if javascriptOn}
+						<TableCell checkbox>
+							<Checkbox />
+						</TableCell>
+					{/if}
 					<TableCell columnId="sender">
 						<Label>From</Label>
 						{#if javascriptOn}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
@@ -122,9 +137,16 @@
 			<Body target="/">
 				{#each slice as item}
 					<Row href="/">
-						<TableCell checkbox>
-							<Checkbox input$id={String(item.id)} value={item} valueKey={item.content} />
-						</TableCell>
+						{#if javascriptOn}
+							<TableCell checkbox>
+								<Checkbox
+									bind:group={selectedItems}
+									input$id={String(item.id)}
+									value={item}
+									valueKey={item.content}
+								/>
+							</TableCell>
+						{/if}
 						<TableCell>{item.sender}</TableCell>
 						<TableCell style="width: 100%;"><a href="/">{item.content}</a></TableCell>
 						<TableCell>
@@ -143,7 +165,7 @@
 							</form>
 						</TableCell>
 						<TableCell>
-							<form action="?/mark_read" method="post" use:enhance={updateState}>
+							<form action="?/mark_read" method="post" use:enhance>
 								<input type="hidden" name="id" value={item.id} />
 								<Button disabled={item.read}>
 									<Icon class="material-icons grey">{item.read ? 'drafts' : 'mark_email_read'}</Icon
@@ -157,18 +179,19 @@
 
 			<Pagination slot="paginate">
 				<svelte:fragment slot="rowsPerPage">
-					<div style="position: absolute; left: 0" class="ml-xs">
-						<Button>Delete marked</Button>
-						<Button>Mark as read</Button>
-					</div>
+					{#if javascriptOn}
+						<div style="position: absolute; left: 0" class="ml-xs">
+							<Button on:click={deleteMany}>Delete marked</Button>
+							<Button on:click={readMany}>Mark as read</Button>
+						</div>
+					{/if}
 
 					<Label>Rows per page:</Label>
 					{#if javascriptOn}
 						<Select disabled variant="outlined" bind:value={rowsPerPage} noLabel>
 							<Option value={10}>10</Option>
-							<!-- <Option value={10}>10</Option>
 							<Option value={25}>25</Option>
-							<Option value={100}>100</Option> -->
+							<Option value={100}>100</Option>
 						</Select>
 					{:else}
 						<Label>10</Label>

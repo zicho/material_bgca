@@ -77,8 +77,8 @@ const getPagination = (page: number, size: number) => {
 	return { from, to };
 };
 
-export async function getMessages(page: number = 0, username?: string): Promise<IMessage[]> {
-	const { from, to } = getPagination(page, 10);
+export async function getMessages(page: number = 0, limit: number = 10, username?: string): Promise<IMessage[]> {
+	const { from, to } = getPagination(page, limit);
 	const { data } = await supabase
 		.from('messages')
 		.select('*')
