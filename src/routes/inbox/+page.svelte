@@ -76,14 +76,23 @@
 	const deleteMany = async () => {
 		let ids = selectedItems.map((x) => x.id);
 		await deleteMessages(ids);
+		resetSelection();
 		invalidateAll();
 	};
 
 	const readMany = async () => {
 		let ids = selectedItems.map((x) => x.id);
 		await markMessagesAsRead(ids);
+		resetSelection();
 		invalidateAll();
 	};
+
+	const resetSelection = () => {
+		selectedItems = []
+		allSelected=false;
+	}
+
+	let allSelected: boolean = true;
 
 	items = handleSort(items, sort, sortDirection);
 
@@ -113,7 +122,7 @@
 			<Head>
 				<Row>
 					{#if javascriptOn}
-						<TableCell checkbox>
+						<TableCell checkbox >
 							<Checkbox />
 						</TableCell>
 					{/if}
