@@ -98,7 +98,7 @@
 
 	let selectedItems: IMessage[] = [];
 
-	const updateSort = () => (items = handleSort(items, sort, sortDirection));
+	const updateSort = () => (data.messages = handleSort(data.messages, sort, sortDirection));
 </script>
 
 <svelte:head>
