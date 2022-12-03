@@ -88,13 +88,11 @@
 	};
 
 	const resetSelection = () => {
-		selectedItems = []
-		allSelected=false;
-	}
+		selectedItems = [];
+		allSelected = false;
+	};
 
 	let allSelected: boolean = true;
-
-	items = handleSort(items, sort, sortDirection);
 
 	let selectedItems: IMessage[] = [];
 
@@ -117,26 +115,25 @@
 			on:SMUIDataTable:sorted={updateSort}
 			table$aria-label="User list"
 			style="width: 100%;"
-			href="/"
 		>
 			<Head>
 				<Row>
 					{#if javascriptOn}
-						<TableCell checkbox >
-							<Checkbox />
+						<TableCell checkbox>
+							<Checkbox disabled={items.length == 0} checked={!allSelected} />
 						</TableCell>
 					{/if}
 					<TableCell columnId="sender">
 						<Label>From</Label>
-						{#if javascriptOn}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
+						{#if javascriptOn && items.length != 0}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
 					</TableCell>
 					<TableCell columnId="content">
 						<Label>Content</Label>
-						{#if javascriptOn} <IconButton class="material-icons">arrow_upward</IconButton>{/if}
+						{#if javascriptOn && items.length != 0} <IconButton class="material-icons">arrow_upward</IconButton>{/if}
 					</TableCell>
 					<TableCell columnId="read">
 						<Label>Read</Label>
-						{#if javascriptOn}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
+						{#if javascriptOn && items.length != 0}<IconButton class="material-icons">arrow_upward</IconButton>{/if}
 					</TableCell>
 					<TableCell columnId="delete" />
 					<TableCell columnId="mark_read" />
@@ -144,46 +141,53 @@
 			</Head>
 
 			<Body target="/">
-				{#each slice as item}
-					<Row href="/">
-						{#if javascriptOn}
-							<TableCell checkbox>
-								<Checkbox
-									bind:group={selectedItems}
-									input$id={String(item.id)}
-									value={item}
-									valueKey={item.content}
-								/>
-							</TableCell>
-						{/if}
-						<TableCell>{item.sender}</TableCell>
-						<TableCell style="width: 100%;"><a href="/">{item.content}</a></TableCell>
-						<TableCell>
-							{#if item.read}
-								<Icon class="material-icons green">check</Icon>
-							{:else}
-								<Icon class="material-icons red">close</Icon>
+				{#if items.length != 0}
+					{#each slice as item}
+						<Row>
+							{#if javascriptOn}
+								<TableCell checkbox>
+									<Checkbox
+										bind:group={selectedItems}
+										input$id={String(item.id)}
+										value={item}
+										valueKey={item.content}
+									/>
+								</TableCell>
 							{/if}
-						</TableCell>
-						<TableCell>
-							<form action="?/delete" method="post" use:enhance>
-								<input type="hidden" name="id" value={item.id} />
-								<Button>
-									<Icon class="material-icons grey">delete</Icon>
-								</Button>
-							</form>
-						</TableCell>
-						<TableCell>
-							<form action="?/mark_read" method="post" use:enhance>
-								<input type="hidden" name="id" value={item.id} />
-								<Button disabled={item.read}>
-									<Icon class="material-icons grey">{item.read ? 'drafts' : 'mark_email_read'}</Icon
-									>
-								</Button>
-							</form>
-						</TableCell>
+							<TableCell>{item.sender}</TableCell>
+							<TableCell style="width: 100%;"><a href="/">{item.content}</a></TableCell>
+							<TableCell>
+								{#if item.read}
+									<Icon class="material-icons green">check</Icon>
+								{:else}
+									<Icon class="material-icons red">close</Icon>
+								{/if}
+							</TableCell>
+							<TableCell>
+								<form action="?/delete" method="post" use:enhance>
+									<input type="hidden" name="id" value={item.id} />
+									<Button>
+										<Icon class="material-icons grey">delete</Icon>
+									</Button>
+								</form>
+							</TableCell>
+							<TableCell>
+								<form action="?/mark_read" method="post" use:enhance>
+									<input type="hidden" name="id" value={item.id} />
+									<Button disabled={item.read}>
+										<Icon class="material-icons grey"
+											>{item.read ? 'drafts' : 'mark_email_read'}</Icon
+										>
+									</Button>
+								</form>
+							</TableCell>
+						</Row>
+					{/each}
+				{:else}
+					<Row>
+						<TableCell style="width 100%">You have no messages.</TableCell>
 					</Row>
-				{/each}
+				{/if}
 			</Body>
 
 			<Pagination slot="paginate">
