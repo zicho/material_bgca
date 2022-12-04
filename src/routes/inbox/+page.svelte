@@ -12,6 +12,7 @@
 	import Checkbox from '@smui/checkbox';
 	import Select, { Option } from '@smui/select';
 	import IconButton from '@smui/icon-button';
+	import { Title, Content, Actions } from '@smui/dialog';
 	import { Label } from '@smui/common';
 	import type { IMessage } from '$lib/core/interfaces/IMessage';
 	import Icon from '@smui/textfield/icon';
@@ -32,6 +33,8 @@
 	let items = data.messages;
 
 	let rowsPerPage = data.limit;
+
+	let hide = false;
 
 	$: {
 		unreadMessages.set(data.unreadMessages);
@@ -169,9 +172,17 @@
 								{/if}
 							</TableCell>
 							<TableCell>
-								<form action="?/delete" method="post" use:enhance>
+								<form
+									id="form-{String(item.id)}"
+									action="?/delete"
+									method="post"
+									use:enhance={() => {
+										hide = true;
+									}}
+								>
 									<input type="hidden" name="id" value={item.id} />
-									<Button>
+									<input type="submit" id={String(item.id)} class="hide" />
+									<Button href="#popup-{String(item.id)}" on:click={() => (hide = false)}>
 										<Icon class="material-icons grey">delete</Icon>
 									</Button>
 								</form>
@@ -266,6 +277,38 @@
 	</Cell>
 </LayoutGrid>
 
+<!-- <Dialog id="popup1" class="overlay" aria-labelledby="simple-title" aria-describedby="simple-content">
+	<Title id="simple-title">Dialog Title</Title>
+	<Content id="simple-content">Super awesome dialog body text?</Content>
+	<Actions>
+		<Button>
+			<Label>No</Label>
+		</Button>
+		<Button>
+			<Label>Yes</Label>
+		</Button>
+	</Actions>
+</Dialog> -->
+
+{#if !hide}
+	{#each items as item}
+		<div id="popup-{String(item.id)}" class="overlay">
+			<!-- svelte-ignore a11y-missing-content -->
+			<a class="cancel" href="#" />
+			<div class="popup">
+				<Title class="mb-md" id="simple-title">Deleting message</Title>
+				<Content id="simple-content">Do you want to delete this message?</Content>
+				<Actions>
+					<Button href="#">
+						<Label>No</Label>
+					</Button>
+					<Button type="submit" form="form-{String(item.id)}">Yes</Button>
+				</Actions>
+			</div>
+		</div>
+	{/each}
+{/if}
+
 <style lang="scss">
 	@use '@material/theme/color-palette';
 
@@ -279,5 +322,41 @@
 
 	:global(.mdc-text-field__icon.grey) {
 		color: color-palette.$grey-600 !important;
+	}
+
+	.overlay {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: rgba(0, 0, 0, 0.5);
+		transition: opacity 200ms;
+		visibility: hidden;
+		opacity: 0;
+		.cancel {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			cursor: default;
+		}
+		&:target {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+
+	:global(.mdc-dialog__title) {
+		padding: 0 !important;
+	}
+
+	.popup {
+		margin: 75px auto;
+		padding: 0px 20px;
+		background: #fff;
+		border: 1px solid #666;
+		width: 300px;
+		box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+		position: relative;
 	}
 </style>
