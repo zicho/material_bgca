@@ -4,6 +4,8 @@ import type { IMessage } from '../interfaces/IMessage';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 import type { RequestEvent } from '@sveltejs/kit';
 
+// TODO: As this grows, maybe add a little structure
+
 export class ApiClient {
 	event: RequestEvent;
 	supabase = async () => await getSupabase(this.event);
@@ -119,13 +121,13 @@ export class ApiClient {
 		const { data, error } = await supabase
 			.from('messages')
 			.select('*')
-			.order('read', { ascending: true })
-			.order('id', { ascending: true })
-			.range(from, to);
+
 
 		if (error) {
 			console.log(error);
 		}
+
+		console.dir(data)
 
 		return data as IMessage[];
 	}
