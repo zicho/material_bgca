@@ -1,4 +1,4 @@
-import { deleteMessages, markMessagesAsRead, getInboxTotalMessageCount, getMessages, getUnreadMessageCount } from '$lib/core/data/api';
+import { ApiClient } from '$lib/core/data/api';
 import { handleSort } from '$lib/core/helpers/tableSorter';
 import type { IMessage } from '$lib/core/interfaces/IMessage';
 import { redirect } from '@sveltejs/kit';
@@ -6,7 +6,6 @@ import type { PageServerLoad } from './$types';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 
 export const load: PageServerLoad = async (event) => {
-
 	const { url, locals } = event;
 	const { session } = await getSupabase(event);
 
@@ -23,26 +22,28 @@ export const load: PageServerLoad = async (event) => {
 		pageNo = 0;
 	}
 
-	let messages = await getMessages(pageNo, limit);
-    let totalMessages = await getInboxTotalMessageCount(locals.userinfo?.username as string);
-	let unreadMessages = await getUnreadMessageCount(locals.userinfo?.username as string);
+	const client = new ApiClient(event);
+
+	let messages = await client.getMessages(pageNo, limit);
+	let totalMessages = await client.getInboxTotalMessageCount(locals.userinfo?.username as string);
+	let unreadMessages = await client.getUnreadMessageCount(locals.userinfo?.username as string);
 
 	if (sort) {
 		messages = handleSort(messages, sort);
 	}
 
-    let lastPage = Math.max(Math.ceil(totalMessages / limit) - 1, 0);
+	let lastPage = Math.max(Math.ceil(totalMessages / limit) - 1, 0);
 
-    // todo: bug: pagination returns last item from previous page
-	
+	// todo: bug: pagination returns last item from previous page
+
 	return {
 		messages,
 		pageNo: +pageNo,
 		sortQuery: sort ? sort : 'sender',
-        onFirstPage: pageNo == 0,
-        onLastPage: messages.length != limit,
-        lastPage,
-        totalMessages,
+		onFirstPage: pageNo == 0,
+		onLastPage: messages.length != limit,
+		lastPage,
+		totalMessages,
 		unreadMessages,
 		limit
 	};
@@ -55,18 +56,14 @@ export const actions: import('./$types').Actions = {
 		const page_no = formData.get('page_no');
 		throw redirect(302, `/inbox?page=${+page_no}`);
 	},
-	delete: async ({ request, cookies }: any) => {
-		const formData = await request.formData();
-		
-		const id = formData.get('id');
-
-		await deleteMessages([id])
+	delete: async (event) => {
+		const formData = await event.request.formData();
+		const id = (formData.get('id') as unknown) as number;
+		await new ApiClient(event).deleteMessages([id]);
 	},
-	mark_read: async ({ request, cookies }: any) => {
-		const formData = await request.formData();
-		
-		const id = formData.get('id');
-
-		await markMessagesAsRead([id])
-	},
+	mark_read: async (event) => {
+		const formData = await event.request.formData();
+		const id = (formData.get('id') as unknown) as number;
+		await new ApiClient(event).markMessagesAsRead([id]);
+	}
 };

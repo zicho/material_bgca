@@ -7,6 +7,12 @@ export const load: PageServerLoad = () => {
 
 export const actions: Actions = {
 	default({ cookies }) {
+
+        cookies.set('session', '', {
+            path: "/",
+            expires: new Date(0)
+        })
+
         cookies.set('supabase-auth-token', '', {
             path: "/",
             expires: new Date(0)

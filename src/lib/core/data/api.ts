@@ -1,65 +1,134 @@
 import supabase from './supabase';
 import type { IProfile } from '../interfaces/IProfile';
 import type { IMessage } from '../interfaces/IMessage';
-import { unreadMessages } from '$lib/stores/messages';
+import { getSupabase } from '@supabase/auth-helpers-sveltekit';
+import type { RequestEvent } from '@sveltejs/kit';
 
-export async function getProfile(username: string): Promise<IProfile> {
-	const { data, error } = await supabase
-		.from('profiles')
-		.select('description')
-		.eq('username', username)
-		.single();
+export class ApiClient {
+	event: RequestEvent;
+	supabase = async () => await getSupabase(this.event);
 
-	return {
-		description: data?.description
-	};
-}
+	constructor(event: any) {
+		this.event = event;
+	}
 
-export async function updateProfileDescription(
-	username: string,
-	description: string
-): Promise<void> {
-	const { data, error } = await supabase
-		.from('profiles')
-		.update({ description: description })
-		.match({ username: username });
-}
+	async updateProfileDescription(username: string, description: string): Promise<void> {
+		const { error } = await supabase
+			.from('profiles')
+			.update({ description: description })
+			.match({ username: username });
 
-export async function userExists(username: string): Promise<boolean> {
-	let { data, error } = await supabase.from('profiles').select(`username`).eq('username', username);
-	return data?.length != 0;
-}
+		if (error) {
+			console.log(error);
+		}
+	}
 
-export async function sendMessage(from: string, to: string, content: string) {
-	const { error } = await supabase
-		.from('messages')
-		.insert({ content: content, sender: from, recipient: to });
-}
+	async getProfile(username: string): Promise<IProfile> {
+		const { data, error } = await supabase
+			.from('profiles')
+			.select('description')
+			.eq('username', username)
+			.single();
 
-export async function getUnreadMessageCount(username: string): Promise<number> {
-	const { data } = await supabase
-		.from('messages')
-		.select('*')
-		.eq('read', false)
-		.eq('recipient', username);
+		if (error) {
+			console.log(error);
+		}
 
-	return data?.length as number;
-}
+		return {
+			description: data?.description
+		};
+	}
 
-export async function getInboxTotalMessageCount(username: string): Promise<number> {
-	const { data } = await supabase.from('messages').select('*').eq('recipient', username);
+	async deleteMessages(ids: number[]) {
+		const { error } = await supabase.from('messages').delete().in('id', ids);
+		if (error) {
+			console.log(error);
+		}
+	}
 
-	return data?.length as number;
-}
+	async markMessagesAsRead(ids: number[]) {
+		const { error } = await supabase.from('messages').update({ read: true }).in('id', ids);
+		if (error) {
+			console.log(error);
+		}
+	}
 
-export async function getUserNameByEmail(email: string) {
-	let { data, error } = await supabase
-		.from('profiles')
-		.select(`username`)
-		.eq('email', email)
-		.single();
+	async userExists(username: string): Promise<boolean> {
+		let { data, error } = await supabase
+			.from('profiles')
+			.select(`username`)
+			.eq('username', username);
 
-	return data?.username;
+		if (error) {
+			console.log(error);
+		}
+
+		return data?.length != 0;
+	}
+
+	async sendMessage(from: string, to: string, content: string) {
+		const { error } = await supabase
+			.from('messages')
+			.insert({ content: content, sender: from, recipient: to });
+
+		if (error) {
+			console.log(error);
+		}
+	}
+
+	async getUnreadMessageCount(username: string): Promise<number> {
+		const { data, error } = await supabase
+			.from('messages')
+			.select('*')
+			.eq('read', false)
+			.eq('recipient', username);
+
+		if (error) {
+			console.log(error);
+		}
+
+		return data?.length as number;
+	}
+
+	async getInboxTotalMessageCount(username: string): Promise<number> {
+		const { data, error } = await supabase.from('messages').select('*').eq('recipient', username);
+
+		if (error) {
+			console.log(error);
+		}
+
+		return data?.length as number;
+	}
+
+	async getUserNameByEmail(email: string) {
+		let { data, error } = await supabase
+			.from('profiles')
+			.select(`username`)
+			.eq('email', email)
+			.single();
+
+		if (error) {
+			console.log(error);
+		}
+
+		return data?.username;
+	}
+
+	async getMessages(page: number = 0, limit: number = 10, username?: string): Promise<IMessage[]> {
+		const { from, to } = getPagination(page, limit);
+		const { data, error } = await supabase
+			.from('messages')
+			.select('*')
+			.order('read', { ascending: true })
+			.order('id', { ascending: true })
+			.range(from, to);
+
+		if (error) {
+			console.log(error);
+		}
+
+		return data as IMessage[];
+	}
 }
 
 const getPagination = (page: number, size: number) => {
@@ -76,25 +145,3 @@ const getPagination = (page: number, size: number) => {
 
 	return { from, to };
 };
-
-export async function getMessages(page: number = 0, limit: number = 10, username?: string): Promise<IMessage[]> {
-	const { from, to } = getPagination(page, limit);
-	const { data, error } = await supabase
-		.from('messages')
-		.select('*')
-		.order('read', { ascending: true })
-		.order('id', { ascending: true })
-		.range(from, to);
-
-	console.dir(data)
-
-	return data as IMessage[];
-}
-
-export async function deleteMessages(ids: number[]) {
-	const { data, error } = await supabase.from('messages').delete().in('id', ids);
-}
-
-export async function markMessagesAsRead(ids: number[]) {
-	const { data, error } = await supabase.from('messages').update({ read: true }).in('id', ids);
-}

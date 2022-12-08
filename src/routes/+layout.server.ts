@@ -1,7 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 import { getServerSession } from '@supabase/auth-helpers-sveltekit';
 import supabase from '$lib/core/data/supabase';
-import { getUnreadMessageCount } from '$lib/core/data/api';
+import { ApiClient } from '$lib/core/data/api';
 
 export const load: LayoutServerLoad = async (event) => {
 	const session = await getServerSession(event);
@@ -13,7 +13,7 @@ export const load: LayoutServerLoad = async (event) => {
 		.eq('id', data.user?.id)
 		.single();
 
-	const unreadMessageCount = await getUnreadMessageCount(profileData?.username as string);
+	const unreadMessageCount = await new ApiClient(event).getUnreadMessageCount(profileData?.username as string);
 
 	//TODO: use locals?
 	// event.locals.user = data.user;
