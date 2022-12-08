@@ -1,9 +1,14 @@
-import { getProfile, sendMessage, userExists } from "$lib/core/data/api";
+import { sendMessage, userExists } from "$lib/core/data/api";
 import { error, redirect } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+import { getSupabase } from '@supabase/auth-helpers-sveltekit';
+import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals, params }) => {
-	if (!locals.user) {
+export const load: PageServerLoad = async (event) => {
+
+	const { session } = await getSupabase(event);
+	const { params } = event;
+
+	if (!session) {
 		throw redirect(302, '/login');
 	}
 

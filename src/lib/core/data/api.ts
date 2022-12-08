@@ -79,13 +79,14 @@ const getPagination = (page: number, size: number) => {
 
 export async function getMessages(page: number = 0, limit: number = 10, username?: string): Promise<IMessage[]> {
 	const { from, to } = getPagination(page, limit);
-	const { data } = await supabase
+	const { data, error } = await supabase
 		.from('messages')
 		.select('*')
 		.order('read', { ascending: true })
 		.order('id', { ascending: true })
-		.eq('recipient', username)
 		.range(from, to);
+
+	console.dir(data)
 
 	return data as IMessage[];
 }

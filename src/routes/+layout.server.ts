@@ -17,10 +17,10 @@ export const load: LayoutServerLoad = async (event) => {
 
 	//TODO: use locals?
 	// event.locals.user = data.user;
-	// event.locals.userinfo = {
-	// 	username: profileData?.username
-	// };
-
+	event.locals.userinfo = {
+		username: profileData?.username
+	};
+	
 	return {
 		session: session,
 		user: data.user,
