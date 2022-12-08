@@ -3,10 +3,15 @@ import { handleSort } from '$lib/core/helpers/tableSorter';
 import type { IMessage } from '$lib/core/interfaces/IMessage';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 
-export const load: PageServerLoad = async ({ locals, params, request, url }) => {
-	if (!locals.user) {
-		throw redirect(302, '/login');
+export const load: PageServerLoad = async (event) => {
+
+	const { url, locals } = event;
+	const { session } = await getSupabase(event);
+
+	if (!session) {
+		throw redirect(303, '/login');
 	}
 
 	let limit = 10;
@@ -18,7 +23,7 @@ export const load: PageServerLoad = async ({ locals, params, request, url }) => 
 		pageNo = 0;
 	}
 
-	let messages = await getMessages(pageNo, limit, locals.userinfo?.username);
+	let messages = await getMessages(pageNo, limit);
     let totalMessages = await getInboxTotalMessageCount(locals.userinfo?.username as string);
 	let unreadMessages = await getUnreadMessageCount(locals.userinfo?.username as string);
 
