@@ -8,14 +8,26 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { unsubscribeAll } from '$lib/stores/unsubscribe';
+	import supabase from '$lib/core/data/supabase';
+	import { invalidate } from '$app/navigation';
 
 	export let data: PageData;
 
 	onMount(async () => {
-		// if we find a user in session, hookup all subscriptions (otherwise this gets handled by login hook)
-		if (data.userinfo?.username) {
+		if (data.session) {
+			// if we find a session, hookup all subscriptions (otherwise this gets handled by login hook)
 			await subscribeToMessages(data.userinfo?.username as string);
 		}
+
+		const {
+			data: { subscription }
+		} = supabase.auth.onAuthStateChange(() => {
+			invalidate('supabase:auth');
+		});
+
+		return () => {
+			subscription.unsubscribe();
+		};
 	});
 
 	let unreadMessageCount = data.messageCount;
@@ -38,7 +50,7 @@
 						</Button>
 					</Section>
 					<Section align="end" toolbar>
-						{#if data.user}
+						{#if data.session}
 							<Button href="/">
 								<Icon class="material-icons">home</Icon>
 								<Label>Home</Label>

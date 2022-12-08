@@ -8,8 +8,12 @@ declare namespace App {
 		userinfo: { username: string; } | null;
 	}
 	interface PageData {
+		// user: import('@supabase/supabase-js').User | null;
+		// userinfo: { username: string; } | null;
+		session: import('@supabase/supabase-js').Session | null;
 		user: import('@supabase/supabase-js').User | null;
 		userinfo: { username: string; } | null;
+		messageCount: number;
 	}
 	// interface Error {}
 	// interface Platform {}

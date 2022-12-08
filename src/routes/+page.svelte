@@ -8,5 +8,6 @@
 </svelte:head>
 
 <div class="container">
-	<div class="mb-md mdc-typography--headline2">Welcome {data.userinfo?.username}!</div>
+	<h1>Welcome {data.userinfo.username}</h1>
+	<!-- <div class="mb-md mdc-typography--headline2">Welcome {data.userinfo?.username}!</div> -->
 </div>

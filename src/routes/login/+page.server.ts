@@ -1,5 +1,6 @@
+import supabase from '$lib/core/data/supabase';
+import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 import { invalid, redirect } from '@sveltejs/kit';
-import supabase from '../../lib/core/data/supabase';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -10,18 +11,26 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 /** @type {import('./$types').Actions} */
 export const actions: import('./$types').Actions = {
-	default: async ({ request, cookies }: any) => {
+	default: async (event) => {
+
+		const { request, cookies, url } = event
+
 		const formData = await request.formData();
-		const email = formData.get('email');
-		const password = formData.get('password');
+		const email = formData.get('email') as string;
+		const password = formData.get('password') as string;
 
-		const { data, error } = await supabase.auth.signInWithPassword({
-			email: email,
-			password: password
-		});
+		const { session, supabaseClient } = await getSupabase(event)
 
-		if (data.session) {
-			cookies.set('session', data.session.access_token, {
+		const { error } = await supabaseClient.auth.signInWithPassword({
+
+			email,
+	  
+			password,
+	  
+		  })
+
+		if (session) {
+			cookies.set('session', session.access_token, {
 				path: '/',
 				httpOnly: true,
 				sameSite: 'strict',

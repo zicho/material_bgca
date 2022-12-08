@@ -1,14 +1,32 @@
-import { getUnreadMessageCount } from '$lib/core/data/api';
 import type { LayoutServerLoad } from './$types';
+import { getServerSession } from '@supabase/auth-helpers-sveltekit';
+import supabase from '$lib/core/data/supabase';
+import { getUnreadMessageCount } from '$lib/core/data/api';
 
-export const load: LayoutServerLoad = async ({ locals }) => {
-	// todo: load unread messages
+export const load: LayoutServerLoad = async (event) => {
+	const session = await getServerSession(event);
+	const { data } = await supabase.auth.getUser(session?.access_token);
 
-    let unreadMessageCount = await getUnreadMessageCount(locals.userinfo?.username as string)
+	const { data: profileData } = await supabase
+		.from('profiles')
+		.select('username')
+		.eq('id', data.user?.id)
+		.single();
+
+	const unreadMessageCount = await getUnreadMessageCount(profileData?.username as string);
+
+	//TODO: use locals?
+	// event.locals.user = data.user;
+	// event.locals.userinfo = {
+	// 	username: profileData?.username
+	// };
 
 	return {
-		user: locals.user,
-		userinfo: locals.userinfo,
+		session: session,
+		user: data.user,
+		userinfo: {
+			username: profileData?.username
+		},
 		messageCount: unreadMessageCount
 	};
 };
