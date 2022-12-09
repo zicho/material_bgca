@@ -25,7 +25,10 @@ export async function updateProfileDescription(
 		.match({ username: username });
 }
 
-export async function 
+export async function userExists(username: string): Promise<boolean> {
+	let { data, error } = await supabase.from('profiles').select(`username`).eq('username', username);
+	return data?.length != 0;
+}
 
 export async function sendMessage(from: string, to: string, content: string) {
 	const { error } = await supabase
@@ -76,11 +79,12 @@ const getPagination = (page: number, size: number) => {
 
 export async function getMessages(page: number = 0, limit: number = 10, username?: string): Promise<IMessage[]> {
 	const { from, to } = getPagination(page, limit);
-	const { data, error } = await supabase
+	const { data } = await supabase
 		.from('messages')
 		.select('*')
 		.order('read', { ascending: true })
 		.order('id', { ascending: true })
+		.eq('recipient', username)
 		.range(from, to);
 
 	return data as IMessage[];
