@@ -10,5 +10,5 @@ export const load: PageServerLoad = async (event) => {
 		throw redirect(302, '/login');
 	}
 
-	throw redirect(302, `/profile/${locals.userinfo?.username}`);
+	throw redirect(302, `/profile/${event.locals.userinfo?.username}`);
 };
