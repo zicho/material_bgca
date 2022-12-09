@@ -1,4 +1,4 @@
-import { deleteMessages, markMessagesAsRead, getInboxTotalMessageCount, getMessages, getUnreadMessageCount } from '$lib/core/data/api';
+import { deleteMessages, markMessagesAsRead, getInboxTotalMessageCount, getMessages } from '$lib/core/data/api';
 import { handleSort } from '$lib/core/helpers/tableSorter';
 import type { IMessage } from '$lib/core/interfaces/IMessage';
 import { redirect } from '@sveltejs/kit';
@@ -25,7 +25,6 @@ export const load: PageServerLoad = async (event) => {
 
 	let messages = await getMessages(pageNo, limit);
     let totalMessages = await getInboxTotalMessageCount(locals.userinfo?.username as string);
-	let unreadMessages = await getUnreadMessageCount(locals.userinfo?.username as string);
 
 	if (sort) {
 		messages = handleSort(messages, sort);
@@ -43,7 +42,6 @@ export const load: PageServerLoad = async (event) => {
         onLastPage: messages.length != limit,
         lastPage,
         totalMessages,
-		unreadMessages,
 		limit
 	};
 };

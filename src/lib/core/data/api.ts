@@ -15,16 +15,6 @@ export async function getProfile(username: string): Promise<IProfile> {
 	};
 }
 
-export async function updateProfileDescription(
-	username: string,
-	description: string
-): Promise<void> {
-	const { data, error } = await supabase
-		.from('profiles')
-		.update({ description: description })
-		.match({ username: username });
-}
-
 export async function userExists(username: string): Promise<boolean> {
 	let { data, error } = await supabase.from('profiles').select(`username`).eq('username', username);
 	return data?.length != 0;
