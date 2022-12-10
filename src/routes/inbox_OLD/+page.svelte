@@ -31,7 +31,9 @@
 	onMount(() => (javascriptOn = true));
 
 	let items = data.messages;
-	let rowsPerPage = data.rowsPerPage;
+
+	let rowsPerPage = data.limit;
+
 	let hide = false;
 
 	$: {
@@ -49,7 +51,7 @@
 
 	let currentPage = data.pageNo;
 
-	let sort: keyof IMessage = 'id';
+	let sort: keyof IMessage = data.sortQuery ? data.sortQuery : 'sender';
 	let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
 	let loading: boolean = false;
 
@@ -77,16 +79,9 @@
 	const deleteMany = async () => {
 		let ids = selectedItems.map((x) => x.id);
 		await deleteMessages(ids);
-		refreshInbox();
 		resetSelection();
 		invalidateAll();
 	};
-
-	const refreshInbox = async () => {
-		console.log("inbox refreshing...");
-		await getMessages(currentPage, rowsPerPage, data.userinfo?.username).then(response => items = response);
-	}
-
 
 	const readMany = async () => {
 		let ids = selectedItems.map((x) => x.id);
@@ -101,7 +96,9 @@
 	};
 
 	let allSelected: boolean = true;
+
 	let selectedItems: IMessage[] = [];
+
 	const updateSort = () => (data.messages = handleSort(data.messages, sort, sortDirection));
 </script>
 
@@ -181,7 +178,6 @@
 									method="post"
 									use:enhance={() => {
 										hide = true;
-										refreshInbox();
 									}}
 								>
 									<input type="hidden" name="id" value={item.id} />

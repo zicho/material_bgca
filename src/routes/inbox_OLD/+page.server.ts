@@ -13,34 +13,37 @@ export const load: PageServerLoad = async (event) => {
 		throw redirect(303, '/login');
 	}
 
-	let rowsPerPage = 10;
+	let limit = 10;
 
 	let pageNo = (url.searchParams.get('page') as unknown) as number;
+	let sort = (url.searchParams.get('sort') as string) as keyof IMessage;
 
 	if (isNaN(+pageNo) || !pageNo) {
 		pageNo = 0;
 	}
 
-	let messages = await getClient(event).getMessages(pageNo, rowsPerPage);
-
-	console.dir(locals)
-
+	let messages = await getClient(event).getMessages(pageNo, limit);
 	let totalMessages = await getClient(event).getInboxTotalMessageCount(
 		locals.userinfo?.username as string
 	);
 
-	let lastPage = Math.max(Math.ceil(50 / rowsPerPage), 0);
+	if (sort) {
+		messages = handleSort(messages, sort);
+	}
 
-	console.dir(totalMessages)
+	let lastPage = Math.max(Math.ceil(totalMessages / limit) - 1, 0);
+
+	// todo: bug: pagination returns last item from previous page
 
 	return {
 		messages,
 		pageNo: +pageNo,
+		sortQuery: sort ? sort : 'sender',
 		onFirstPage: pageNo == 0,
-		onLastPage: messages.length != rowsPerPage,
+		onLastPage: messages.length != limit,
 		lastPage,
 		totalMessages,
-		rowsPerPage
+		limit
 	};
 };
 

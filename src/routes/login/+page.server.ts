@@ -1,3 +1,4 @@
+import { setSession } from '$lib/core/helpers/sessionHelper';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 import { invalid, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -27,7 +28,7 @@ export const actions: import('./$types').Actions = {
 		});
 
 		if (data.session) {
-
+			setSession(event, data.session.access_token);
 			throw redirect(302, '/');
 		} else {
 			return invalid(400, { message: error?.message, email: email });
