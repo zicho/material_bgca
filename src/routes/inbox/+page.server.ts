@@ -47,23 +47,21 @@ export const load: PageServerLoad = async (event) => {
 
 /** @type {import('./$types').Actions} */
 export const actions: import('./$types').Actions = {
-	change_page: async ({ request, cookies }: any) => {
+	change_page: async ({ request }) => {
 		const formData = await request.formData();
-		const page_no = formData.get('page_no');
+		const page_no = formData.get('page_no') as unknown as number;
 		throw redirect(302, `/inbox?page=${+page_no}`);
 	},
+	
 	delete: async (event) => {
 		const formData = await event.request.formData();
-
 		const id = (formData.get('id') as unknown) as number;
-
 		await getClient(event).deleteMessages([id]);
 	},
+
 	mark_read: async (event) => {
 		const formData = await event.request.formData();
-
 		const id = (formData.get('id') as unknown) as number;
-
 		await getClient(event).markMessagesAsRead([id]);
 	}
 };

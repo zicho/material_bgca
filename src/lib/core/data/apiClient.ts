@@ -11,7 +11,7 @@ export default function getClient(event: RequestEvent) {
 class ApiClient {
 	event: RequestEvent;
 
-	constructor(event: any) {
+	constructor(event: RequestEvent) {
 		this.event = event;
 	}
 
@@ -77,7 +77,7 @@ class ApiClient {
 			.from('messages')
 			.select('*')
 			.eq('recipient', username);
-			
+
 		return data?.length as number;
 	}
 
