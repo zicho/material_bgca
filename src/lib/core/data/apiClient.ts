@@ -77,7 +77,7 @@ class ApiClient {
 			.from('messages')
 			.select('*')
 			.eq('recipient', username);
-
+			
 		return data?.length as number;
 	}
 
