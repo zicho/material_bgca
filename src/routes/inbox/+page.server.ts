@@ -23,15 +23,11 @@ export const load: PageServerLoad = async (event) => {
 
 	let messages = await getClient(event).getMessages(pageNo, rowsPerPage);
 
-	console.dir(locals)
-
 	let totalMessages = await getClient(event).getInboxTotalMessageCount(
 		locals.userinfo?.username as string
 	);
 
 	let lastPage = Math.max(Math.ceil(50 / rowsPerPage), 0);
-
-	console.dir(totalMessages)
 
 	return {
 		messages,
