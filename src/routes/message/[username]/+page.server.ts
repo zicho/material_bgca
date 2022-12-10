@@ -2,7 +2,6 @@ import { error, redirect } from '@sveltejs/kit';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 import type { PageServerLoad } from './$types';
 import getClient from '$lib/core/data/apiClient';
-import { notifySuccess } from '$lib/core/notify';
 
 export const load: PageServerLoad = async (event) => {
 	const { session } = await getSupabase(event);

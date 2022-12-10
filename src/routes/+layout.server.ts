@@ -7,27 +7,16 @@ import { redirect } from '@sveltejs/kit';
 export const load: LayoutServerLoad = async (event) => {
 	const session = await getServerSession(event);
 
-	const { data } = await supabase.auth.getUser(session?.access_token);
+	const data = await getClient(event).getUser(session?.access_token);
+	const username = data?.user_metadata.username;
 
-	const { data: profileData } = await supabase
-		.from('profiles')
-		.select('username')
-		.eq('id', data.user?.id)
-		.single();
+	const unreadMessageCount = await getClient(event).getUnreadMessageCount(username);
 
-	const unreadMessageCount = await getClient(event).getUnreadMessageCount(profileData?.username as string);
-
-	//TODO: use locals?
-	// event.locals.user = data.user;
-	event.locals.userinfo = {
-		username: profileData?.username
-	};
-	
 	return {
 		session: session,
-		user: data.user,
+		user: data,
 		userinfo: {
-			username: profileData?.username
+			username: username
 		},
 		messageCount: unreadMessageCount
 	};

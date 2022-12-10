@@ -2,6 +2,7 @@ import type { IProfile } from '../interfaces/IProfile';
 import type { IMessage } from '../interfaces/IMessage';
 import { getServerSession, getSupabase } from '@supabase/auth-helpers-sveltekit';
 import type { RequestEvent, ServerLoadEvent } from '@sveltejs/kit';
+import type { User } from '@supabase/supabase-js';
 
 export default function getClient(event: RequestEvent) {
 	return new ApiClient(event);
@@ -12,6 +13,13 @@ class ApiClient {
 
 	constructor(event: any) {
 		this.event = event;
+	}
+
+	async getUser(sessionId?: string): Promise<User | null> {
+		const { supabaseClient } = await getSupabase(this.event);
+		const { data, error } = await supabaseClient.auth.getUser(sessionId);
+
+		return data.user;
 	}
 
 	async getProfile(username: string): Promise<IProfile> {

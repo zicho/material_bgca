@@ -1,8 +1,7 @@
-import {  userExists } from '$lib/core/data/api';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
-import getApiClient, { ApiClient } from '$lib/core/data/apiClient';
+import getApiClient from '$lib/core/data/apiClient';
 
 export const load: PageServerLoad = async (event) => {
 	const { session } = await getSupabase(event);

@@ -61,7 +61,7 @@ export const actions: import('./$types').Actions = {
 			.eq('id', data.user?.id);
 
 		await supabaseClient.auth.updateUser({
-			data: { username: { username: username } }
+			data: { username: username }
 		});
 
 		// if (data) {
