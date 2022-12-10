@@ -14,10 +14,8 @@ class ApiClient {
 		this.event = event;
 	}
 
-
 	async getProfile(username: string): Promise<IProfile> {
-
-		const { supabaseClient } = await getSupabase(this.event)
+		const { supabaseClient } = await getSupabase(this.event);
 		const { data, error } = await supabaseClient
 			.from('profiles')
 			.select('description')
@@ -33,8 +31,23 @@ class ApiClient {
 		};
 	}
 
+	async getMessages(page: number = 0, limit: number = 10): Promise<IMessage[]> {
+		const { from, to } = getPagination(page, limit);
+		const { supabaseClient } = await getSupabase(this.event);
+		const { data, error } = await supabaseClient
+			.from('messages')
+			.select('*')
+			.order('read', { ascending: true })
+			.order('id', { ascending: true })
+			.range(from, to);
+
+		console.dir(data?.length);
+
+		return data as IMessage[];
+	}
+
 	async userExists(username: string): Promise<boolean> {
-		const { supabaseClient } = await getSupabase(this.event)
+		const { supabaseClient } = await getSupabase(this.event);
 		const { data, error } = await supabaseClient
 			.from('profiles')
 			.select(`username`)
@@ -43,7 +56,7 @@ class ApiClient {
 	}
 
 	async getUnreadMessageCount(username: string): Promise<number> {
-		const { supabaseClient } = await getSupabase(this.event)
+		const { supabaseClient } = await getSupabase(this.event);
 		const { data, error } = await supabaseClient
 			.from('messages')
 			.select('*')
@@ -54,7 +67,7 @@ class ApiClient {
 	}
 
 	async getUserNameByEmail(email: string) {
-		const { supabaseClient } = await getSupabase(this.event)
+		const { supabaseClient } = await getSupabase(this.event);
 		const { data, error } = await supabaseClient
 			.from('profiles')
 			.select(`username`)
@@ -65,7 +78,7 @@ class ApiClient {
 	}
 
 	async updateProfileDescription(username: string, description: string): Promise<void> {
-		const { supabaseClient } = await getSupabase(this.event)
+		const { supabaseClient } = await getSupabase(this.event);
 		const { data, error } = await supabaseClient
 			.from('profiles')
 			.update({ description: description })
@@ -73,4 +86,34 @@ class ApiClient {
 
 		console.dir(error);
 	}
+
+	async sendMessage(from: string, to: string, content: string) {
+		const { supabaseClient } = await getSupabase(this.event);
+		const recipient = (
+			await supabaseClient.from('profiles').select('id').eq('username', to).single()
+		).data;
+
+		const { error } = await supabaseClient
+			.from('messages')
+			.insert({ content: content, sender: from, recipient: to, recipient_id: recipient?.id });
+
+		if (error) {
+			console.log(error);
+		}
+	}
 }
+
+const getPagination = (page: number, size: number) => {
+	size--; // fix so limit returns properly... otherwise you get 11 instead of 10, for example. not sure why ¯\_(ツ)_/¯
+	const val = Number(page);
+
+	if (Number.isNaN(val)) {
+		page = 0;
+	}
+
+	const limit = size ? +size : 3;
+	const from = page ? page * limit : 0;
+	const to = page ? from + size : size;
+
+	return { from, to };
+};

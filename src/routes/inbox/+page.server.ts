@@ -4,6 +4,7 @@ import type { IMessage } from '$lib/core/interfaces/IMessage';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
+import getClient from '$lib/core/data/apiClient';
 
 export const load: PageServerLoad = async (event) => {
 
@@ -23,7 +24,7 @@ export const load: PageServerLoad = async (event) => {
 		pageNo = 0;
 	}
 
-	let messages = await getMessages(pageNo, limit);
+	let messages = await getClient(event).getMessages(pageNo, limit);
     let totalMessages = await getInboxTotalMessageCount(locals.userinfo?.username as string);
 
 	if (sort) {

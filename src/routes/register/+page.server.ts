@@ -60,6 +60,10 @@ export const actions: import('./$types').Actions = {
 			.update({ username: username, email: email, updated_at: new Date() })
 			.eq('id', data.user?.id);
 
+		await supabaseClient.auth.updateUser({
+			data: { username: { username: username } }
+		});
+
 		// if (data) {
 		// 	await createProfile(username, data.user?.email as string, data.user?.id);
 		// }
