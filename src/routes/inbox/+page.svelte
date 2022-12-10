@@ -234,16 +234,16 @@
 				</svelte:fragment>
 
 				<svelte:fragment slot="total">
-					Page {currentPage + 1} of {data.lastPage + 1}
+					Page {currentPage} of {data.lastPage}
 				</svelte:fragment>
 
-				<form method="POST" action="?/change_page" use:enhance={() => goto_page(0)}>
-					<input type="hidden" name="page_no" value={0} />
+				<form method="POST" action="?/change_page" use:enhance={() => goto_page(1)}>
+					<input type="hidden" name="page_no" value={1} />
 					<IconButton
 						class="material-icons"
 						action="first-page"
 						title="First page"
-						disabled={currentPage === 0 || loading}>first_page</IconButton
+						disabled={data.onFirstPage || loading}>first_page</IconButton
 					>
 				</form>
 
