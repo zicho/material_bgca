@@ -14,10 +14,14 @@
 	export let data: PageData;
 
 	onMount(async () => {
+		console.log("MOUNTING!")
 		if (data.session) {
 			// if we find a session, hookup all subscriptions (otherwise this gets handled by login hook)
+
+			console.log("subscribing with username: " + data.userinfo?.username)
+
 			await subscribeToMessages(data.userinfo?.username as string);
-		}
+		} 
 
 		const {
 			data: { subscription }

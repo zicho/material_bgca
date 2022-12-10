@@ -1,3 +1,4 @@
+import type { IMessage } from '../interfaces/IMessage';
 import supabase from './supabase';
 
 export async function getUnreadMessageCount(username: string): Promise<number> {
@@ -20,6 +21,15 @@ export async function getUserNameByEmail(email: string) {
 	return data?.username;
 }
 
+export async function deleteMessages(ids: number[]) {
+	const { data, error } = await supabase.from('messages').delete().in('id', ids);
+}
+
+export async function markMessagesAsRead(ids: number[]) {
+	const { data, error } = await supabase.from('messages').update({ read: true }).in('id', ids);
+}
+
+
 const getPagination = (page: number, size: number) => {
 	size--; // fix so limit returns properly... otherwise you get 11 instead of 10, for example. not sure why ¯\_(ツ)_/¯
 	const val = Number(page);
@@ -34,3 +44,16 @@ const getPagination = (page: number, size: number) => {
 
 	return { from, to };
 };
+
+export async function getMessages(page: number = 0, limit: number = 10, username?: string): Promise<IMessage[]> {
+	const { from, to } = getPagination(page, limit);
+	const { data } = await supabase
+		.from('messages')
+		.select('*')
+		.order('read', { ascending: true })
+		.order('id', { ascending: true })
+		.eq('recipient', username)
+		.range(from, to);
+
+	return data as IMessage[];
+}
