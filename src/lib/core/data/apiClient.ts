@@ -1,7 +1,7 @@
 import type { IProfile } from '../interfaces/IProfile';
 import type { IMessage } from '../interfaces/IMessage';
-import { getSupabase } from '@supabase/auth-helpers-sveltekit';
-import type { RequestEvent } from '@sveltejs/kit';
+import { getServerSession, getSupabase } from '@supabase/auth-helpers-sveltekit';
+import type { RequestEvent, ServerLoadEvent } from '@sveltejs/kit';
 
 export default function getClient(event: RequestEvent) {
 	return new ApiClient(event);
@@ -41,9 +41,30 @@ class ApiClient {
 			.order('id', { ascending: true })
 			.range(from, to);
 
-		console.dir(data?.length);
-
 		return data as IMessage[];
+	}
+
+	async deleteMessages(ids: number[]) {
+		const { supabaseClient } = await getSupabase(this.event);
+		const { data, error } = await supabaseClient.from('messages').delete().in('id', ids);
+	}
+
+	async markMessagesAsRead(ids: number[]) {
+		const { supabaseClient } = await getSupabase(this.event);
+		const { data, error } = await supabaseClient
+			.from('messages')
+			.update({ read: true })
+			.in('id', ids);
+	}
+
+	async getInboxTotalMessageCount(username: string): Promise<number> {
+		const { supabaseClient } = await getSupabase(this.event);
+		const { data, error } = await supabaseClient
+			.from('messages')
+			.select('*')
+			.eq('recipient', username);
+
+		return data?.length as number;
 	}
 
 	async userExists(username: string): Promise<boolean> {

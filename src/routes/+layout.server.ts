@@ -6,6 +6,7 @@ import { redirect } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async (event) => {
 	const session = await getServerSession(event);
+
 	const { data } = await supabase.auth.getUser(session?.access_token);
 
 	const { data: profileData } = await supabase

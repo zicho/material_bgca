@@ -5,9 +5,9 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async (event) => {
 	const { session } = await getSupabase(event);
 
-	const { locals } = event;
-
 	if (!session) {
 		throw redirect(303, '/login');
 	}
+
+	
 };

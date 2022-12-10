@@ -8,13 +8,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (!session) {
 		return await resolve(event);
 	}
-	
+
 	const { data, error } = await supabase.auth.getUser(session);
 
 	if (error) {
-		// if get user gets error, clear session, might be token expiration
+		// if get user gets error, clear session, might be token expiration or deleted user
 		// TODO: refresh token?
+		console.log("user auth failed, deleting session")
 		event.cookies.delete('session');
+		event.cookies.delete('supabase-auth-token');
 		return await resolve(event);
 	}
 

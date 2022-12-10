@@ -1,4 +1,3 @@
-import { getProfile } from '$lib/core/data/api';
 import getClient from '$lib/core/data/apiClient';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -38,8 +37,6 @@ export const actions: import('./$types').Actions = {
 
 		const formData = await request.formData();
 		const description = formData.get('description');
-
-		const { session, supabaseClient } = await getSupabase(event)
 
 		await getClient(event).updateProfileDescription(
 			params.username,

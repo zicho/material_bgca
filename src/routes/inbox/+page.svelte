@@ -37,7 +37,7 @@
 	let hide = false;
 
 	$: {
-		unreadMessages.set(data.unreadMessages);
+		unreadMessages.set(data.messageCount);
 	}
 
 	$: start = data.pageNo * rowsPerPage;

@@ -1,4 +1,3 @@
-import { sendMessage, userExists } from '$lib/core/data/api';
 import { error, redirect } from '@sveltejs/kit';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 import type { PageServerLoad } from './$types';
@@ -13,7 +12,7 @@ export const load: PageServerLoad = async (event) => {
 		throw redirect(302, '/login');
 	}
 
-	if (!(await userExists(params.username))) {
+	if (!(await getClient(event).userExists(params.username))) {
 		throw error(404, 'This user does not seem to exist.');
 	}
 

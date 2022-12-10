@@ -1,4 +1,3 @@
-import { deleteMessages, markMessagesAsRead, getInboxTotalMessageCount, getMessages } from '$lib/core/data/api';
 import { handleSort } from '$lib/core/helpers/tableSorter';
 import type { IMessage } from '$lib/core/interfaces/IMessage';
 import { redirect } from '@sveltejs/kit';
@@ -7,7 +6,6 @@ import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 import getClient from '$lib/core/data/apiClient';
 
 export const load: PageServerLoad = async (event) => {
-
 	const { url, locals } = event;
 	const { session } = await getSupabase(event);
 
@@ -25,24 +23,26 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	let messages = await getClient(event).getMessages(pageNo, limit);
-    let totalMessages = await getInboxTotalMessageCount(locals.userinfo?.username as string);
+	let totalMessages = await getClient(event).getInboxTotalMessageCount(
+		locals.userinfo?.username as string
+	);
 
 	if (sort) {
 		messages = handleSort(messages, sort);
 	}
 
-    let lastPage = Math.max(Math.ceil(totalMessages / limit) - 1, 0);
+	let lastPage = Math.max(Math.ceil(totalMessages / limit) - 1, 0);
 
-    // todo: bug: pagination returns last item from previous page
-	
+	// todo: bug: pagination returns last item from previous page
+
 	return {
 		messages,
 		pageNo: +pageNo,
 		sortQuery: sort ? sort : 'sender',
-        onFirstPage: pageNo == 0,
-        onLastPage: messages.length != limit,
-        lastPage,
-        totalMessages,
+		onFirstPage: pageNo == 0,
+		onLastPage: messages.length != limit,
+		lastPage,
+		totalMessages,
 		limit
 	};
 };
@@ -54,18 +54,18 @@ export const actions: import('./$types').Actions = {
 		const page_no = formData.get('page_no');
 		throw redirect(302, `/inbox?page=${+page_no}`);
 	},
-	delete: async ({ request, cookies }: any) => {
-		const formData = await request.formData();
-		
-		const id = formData.get('id');
+	delete: async (event) => {
+		const formData = await event.request.formData();
 
-		await deleteMessages([id])
-	},
-	mark_read: async ({ request, cookies }: any) => {
-		const formData = await request.formData();
-		
-		const id = formData.get('id');
+		const id = formData.get('id') as unknown as number;
 
-		await markMessagesAsRead([id])
+		await getClient(event).deleteMessages([id]);
 	},
+	mark_read: async (event) => {
+		const formData = await event.request.formData();
+
+		const id = formData.get('id')  as unknown as number;
+
+		await getClient(event).markMessagesAsRead([id]);
+	}
 };
