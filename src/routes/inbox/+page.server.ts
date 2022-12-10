@@ -27,7 +27,7 @@ export const load: PageServerLoad = async (event) => {
 		locals.userinfo?.username as string
 	);
 
-	let lastPage = Math.max(Math.ceil(50 / rowsPerPage), 0);
+	let lastPage = Math.max(Math.ceil(totalMessages / rowsPerPage) - 1, 0);
 
 	return {
 		messages,
