@@ -1,3 +1,4 @@
+import getClient from '$lib/core/data/apiClient';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -9,5 +10,9 @@ export const load: PageServerLoad = async (event) => {
 		throw redirect(303, '/login');
 	}
 
-	
+	let data = await getClient(event).getUserList();
+
+	return {
+		userList: data as string[]
+	}
 };

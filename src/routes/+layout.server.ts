@@ -1,8 +1,6 @@
 import type { LayoutServerLoad } from './$types';
 import { getServerSession } from '@supabase/auth-helpers-sveltekit';
-import supabase from '$lib/core/data/supabase';
 import getClient from '$lib/core/data/apiClient';
-import { redirect } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async (event) => {
 	const session = await getServerSession(event);

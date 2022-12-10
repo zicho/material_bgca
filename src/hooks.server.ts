@@ -1,9 +1,10 @@
 import '$lib/core/data/supabase';
 import supabase from '$lib/core/data/supabase';
+import { clearSession, COOKIE_NAME } from '$lib/core/helpers/sessionHelper';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const session = event.cookies.get('session');
+	const session = event.cookies.get(COOKIE_NAME);
 
 	if (!session) {
 		return await resolve(event);
@@ -14,9 +15,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (error) {
 		// if get user gets error, clear session, might be token expiration or deleted user
 		// TODO: refresh token?
-		console.log("user auth failed, deleting session")
-		event.cookies.delete('session');
-		event.cookies.delete('supabase-auth-token');
+		console.log('user auth failed, deleting session');
+
+		clearSession(event);
+
 		return await resolve(event);
 	}
 
@@ -34,7 +36,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		};
 	} else {
 		// this probably shouldnt happen, but to be safe, clear session
-		event.cookies.delete('session');
+		clearSession(event);
 		return await resolve(event);
 	}
 

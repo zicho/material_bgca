@@ -1,6 +1,10 @@
 <script lang="ts">
+	import type { PageData } from './$types';
 	import Button, { Label } from '@smui/button';
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
+	export let data: PageData;
+
+	
 </script>
 
 <svelte:head>

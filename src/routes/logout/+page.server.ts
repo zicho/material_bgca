@@ -1,3 +1,4 @@
+import { clearSession } from '$lib/core/helpers/sessionHelper';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -6,12 +7,8 @@ export const load: PageServerLoad = () => {
 };
 
 export const actions: Actions = {
-	default({ cookies }) {
-        cookies.set('supabase-auth-token', '', {
-            path: "/",
-            expires: new Date(0)
-        })
-
+	default(event) {
+        clearSession(event);
         throw redirect(302, '/login');
     }
 };

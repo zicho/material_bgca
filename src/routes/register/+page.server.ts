@@ -1,3 +1,4 @@
+import { setSession } from '$lib/core/helpers/sessionHelper';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
 import { redirect, invalid } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -69,13 +70,7 @@ export const actions: import('./$types').Actions = {
 		// }
 
 		if (data.session) {
-			cookies.set('session', data.session.access_token, {
-				path: '/',
-				httpOnly: true,
-				sameSite: 'strict',
-				secure: process.env.NODE_ENV == 'production',
-				maxAge: 60 * 60 * 24 * 30
-			});
+			setSession(event, data.session.access_token);
 			throw redirect(302, '/');
 		} else {
 			return invalid(400, { message: error?.message, username, email });
