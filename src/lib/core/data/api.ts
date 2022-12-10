@@ -1,7 +1,6 @@
 import supabase from './supabase';
 import type { IProfile } from '../interfaces/IProfile';
 import type { IMessage } from '../interfaces/IMessage';
-import { unreadMessages } from '$lib/stores/messages';
 
 export async function getProfile(username: string): Promise<IProfile> {
 	const { data, error } = await supabase
@@ -69,13 +68,18 @@ const getPagination = (page: number, size: number) => {
 
 export async function getMessages(page: number = 0, limit: number = 10, username?: string): Promise<IMessage[]> {
 	const { from, to } = getPagination(page, limit);
+
+	console.dir(username)
+
 	const { data } = await supabase
 		.from('messages')
 		.select('*')
-		.order('read', { ascending: true })
-		.order('id', { ascending: true })
+		// .order('read', { ascending: true })
+		// .order('id', { ascending: true })
 		.eq('recipient', username)
-		.range(from, to);
+		// .range(from, to);
+
+	console.dir(data)
 
 	return data as IMessage[];
 }
