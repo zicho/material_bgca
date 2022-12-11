@@ -52,7 +52,6 @@ export async function getMessages(page: number = 0, limit: number = 10, username
 		.select('*')
 		.order('read', { ascending: true })
 		.order('id', { ascending: true })
-		.eq('recipient', username)
 		.range(from, to);
 
 	return data as IMessage[];

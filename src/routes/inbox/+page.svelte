@@ -34,9 +34,13 @@
 	let rowsPerPage = data.rowsPerPage;
 	let hide = false;
 
-	$: {
-		unreadMessages.set(data.messageCount);
+	$: onChange($unreadMessages);
+
+	function onChange(messageCount: number) {
+		refreshInbox();
 	}
+
+	// $: refreshInbox(items)
 
 	$: start = data.pageNo * rowsPerPage;
 	$: end = Math.min(start + rowsPerPage, items.length);
@@ -83,10 +87,10 @@
 	};
 
 	const refreshInbox = async () => {
-		console.log("inbox refreshing...");
-		await getMessages(currentPage, rowsPerPage, data.userinfo?.username).then(response => items = response);
-	}
-
+		console.log('inbox refreshing...');
+		data.messages = await getMessages(currentPage, rowsPerPage);
+		items = data.messages;
+	};
 
 	const readMany = async () => {
 		let ids = selectedItems.map((x) => x.id);
@@ -109,6 +113,7 @@
 	<title>Inbox</title>
 </svelte:head>
 
+<button on:click={refreshInbox}>Reeee</button>
 <LayoutGrid>
 	<Cell spanDevices={{ desktop: 12, tablet: 8, phone: 4 }}>
 		<div class="mb-xxs mdc-typography--headline2">Inbox</div>
