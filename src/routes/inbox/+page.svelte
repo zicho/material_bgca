@@ -113,7 +113,6 @@
 	<title>Inbox</title>
 </svelte:head>
 
-<button on:click={refreshInbox}>Reeee</button>
 <LayoutGrid>
 	<Cell spanDevices={{ desktop: 12, tablet: 8, phone: 4 }}>
 		<div class="mb-xxs mdc-typography--headline2">Inbox</div>
