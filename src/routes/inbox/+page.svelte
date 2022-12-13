@@ -18,8 +18,13 @@
 	import Icon from '@smui/textfield/icon';
 	import { onMount } from 'svelte';
 	import { handleSort } from '$lib/core/helpers/tableSorter';
-	import { enhance } from '$app/forms';
-	import { deleteMessages, getMessages, getUnreadMessageCount, markMessagesAsRead } from '$lib/core/data/api';
+	import { applyAction, enhance } from '$app/forms';
+	import {
+		deleteMessages,
+		getMessages,
+		getUnreadMessageCount,
+		markMessagesAsRead
+	} from '$lib/core/data/api';
 	import Button from '@smui/button';
 	import { unreadMessages } from '$lib/stores/messages';
 	import { invalidateAll } from '$app/navigation';
@@ -194,7 +199,10 @@
 									method="post"
 									use:enhance={() => {
 										hide = true;
-										refreshInbox();
+										return async ({ result }) => {
+											await applyAction(result);
+											refreshInbox();
+										};
 									}}
 								>
 									<input type="hidden" name="id" value={item.id} />
@@ -205,7 +213,16 @@
 								</form>
 							</TableCell>
 							<TableCell>
-								<form action="?/mark_read" method="post" use:enhance={() => refreshInbox()}>
+								<form
+									action="?/mark_read"
+									method="post"
+									use:enhance={() => {
+										return async ({ result }) => {
+											await applyAction(result);
+											refreshInbox();
+										};
+									}}
+								>
 									<input type="hidden" name="id" value={item.id} />
 									<Button disabled={item.read}>
 										<Icon class="material-icons grey"
