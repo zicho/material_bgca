@@ -6,22 +6,18 @@ import { writable } from 'svelte/store';
 
 export let unreadMessages = writable(0);
 
-let _username: string;
-
 export async function subscribeViaEmail(email: string) {
 	const username = await getUserNameByEmail(email);
 	await subscribeToMessages(username);
 }
 
 export async function subscribeToMessages(username: string) {
-
-	_username = username;
 	unreadMessages.set((await getUnreadMessageCount()) as number);
 
 	supabase
 		.channel('messages')
 		.on('postgres_changes', { event: 'INSERT', schema: 'public' }, async (payload) => {
-			if (payload.new.recipient == _username) {
+			if (payload.new.recipient == username) {
 				console.log("message received!")
 				unreadMessages.set((await getUnreadMessageCount()) as number);
 				notifySuccess(

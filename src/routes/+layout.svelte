@@ -15,15 +15,6 @@
 	export let data: PageData;
 
 	onMount(async () => {
-		console.log("MOUNTING!")
-		if (data.session) {
-			// if we find a session, hookup all subscriptions (otherwise this gets handled by login hook)
-
-			console.log("subscribing with username: " + data.userinfo?.username)
-
-			await subscribeToMessages(data.userinfo?.username as string);
-		} 
-
 		const {
 			data: { subscription }
 		} = supabase.auth.onAuthStateChange(() => {
@@ -38,8 +29,15 @@
 	let unreadMessageCount = data.messageCount;
 
 	if (browser) {
-		unreadMessages.subscribe(async () => {
-			unreadMessageCount = await getUnreadMessageCount();
+		onMount(async () => {
+			if (data.session) {
+				// if we find a session, hookup all subscriptions (otherwise this gets handled by login hook)
+				await subscribeToMessages(data.userinfo?.username as string);
+			}
+
+			unreadMessages.subscribe(async () => {
+				unreadMessageCount = await getUnreadMessageCount();
+			});
 		});
 	}
 </script>

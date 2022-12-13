@@ -183,7 +183,7 @@
 									/>
 								</TableCell>
 							{/if}
-							<TableCell>{item.sender}</TableCell>
+							<TableCell style="width: 100%;"><a href="profile/{item.sender}">{item.sender}</a></TableCell>
 							<TableCell style="width: 100%;"><a href="/">{item.content}</a></TableCell>
 							<TableCell>
 								{#if item.read}

@@ -4,8 +4,6 @@
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
 	import { enhance } from '$app/forms';
 	export let data: PageData;
-
-	let fileInput;
 </script>
 
 <svelte:head>

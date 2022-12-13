@@ -1,5 +1,3 @@
-import { handleSort } from '$lib/core/helpers/tableSorter';
-import type { IMessage } from '$lib/core/interfaces/IMessage';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getSupabase } from '@supabase/auth-helpers-sveltekit';
