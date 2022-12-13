@@ -3,6 +3,8 @@
 	import Fab, { Icon } from '@smui/fab';
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
 	import { enhance } from '$app/forms';
+	import Button from '@smui/button';
+	import Textfield from '@smui/textfield';
 	export let data: PageData;
 </script>
 
@@ -16,8 +18,19 @@
 			<div class="avatar-container">
 				<img id="avatar" src={data.avatarUrl} alt="avatar" />
 				{#if data.isYourPage}
-					<input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
-					<button class="upload-btn">Upload</button>
+					<Textfield
+					variant="outlined"
+					type="file"
+					name="avatar" 
+					required
+					value=""
+					class="mb-md"
+					style="display: flex; align-content: center"
+					input$name="avatar"
+					input$accept="image/png, image/jpeg"
+					input$style="display: none"
+				><div class="mdc-typography--button" style="display: flex; margin: auto">Select File</div></Textfield>
+					<Button>Upload</Button>
 				{/if}
 			</div>
 		</form>
@@ -62,25 +75,5 @@
 		height: 128px;
 		width: 128px;
 		margin-bottom: 10px;
-	}
-
-	.hidden {
-		display: none;
-	}
-
-	.upload-btn {
-		width: 128px;
-		height: 32px;
-		background-color: black;
-		font-family: sans-serif;
-		color: white;
-		font-weight: bold;
-		border: none;
-	}
-
-	.upload-btn:hover {
-		background-color: white;
-		color: black;
-		outline: black solid 2px;
 	}
 </style>
