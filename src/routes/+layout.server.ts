@@ -8,7 +8,7 @@ export const load: LayoutServerLoad = async (event) => {
 	const data = await getClient(event).getUser(session?.access_token);
 	const username = data?.user_metadata.username;
 
-	const unreadMessageCount = await getClient(event).getUnreadMessageCount(username);
+	const unreadMessageCount = await getClient(event).getUnreadMessageCount();
 
 	return {
 		session: session,

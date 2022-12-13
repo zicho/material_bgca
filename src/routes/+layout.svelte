@@ -10,6 +10,7 @@
 	import { unsubscribeAll } from '$lib/stores/unsubscribe';
 	import supabase from '$lib/core/data/supabase';
 	import { invalidate } from '$app/navigation';
+	import { getUnreadMessageCount } from '$lib/core/data/api';
 
 	export let data: PageData;
 
@@ -36,9 +37,11 @@
 
 	let unreadMessageCount = data.messageCount;
 
+	console.dir(data.messageCount)
+
 	if (browser) {
-		unreadMessages.subscribe((value) => {
-			unreadMessageCount = value;
+		unreadMessages.subscribe(async () => {
+			unreadMessageCount = await getUnreadMessageCount();
 		});
 	}
 </script>
