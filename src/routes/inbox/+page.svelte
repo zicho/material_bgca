@@ -19,10 +19,11 @@
 	import { onMount } from 'svelte';
 	import { handleSort } from '$lib/core/helpers/tableSorter';
 	import { enhance } from '$app/forms';
-	import { deleteMessages, getMessages, markMessagesAsRead } from '$lib/core/data/api';
+	import { deleteMessages, getMessages, getUnreadMessageCount, markMessagesAsRead } from '$lib/core/data/api';
 	import Button from '@smui/button';
 	import { unreadMessages } from '$lib/stores/messages';
 	import { invalidateAll } from '$app/navigation';
+	import { browser } from '$app/environment';
 
 	export let data: PageData;
 
@@ -89,6 +90,7 @@
 	const refreshInbox = async () => {
 		console.log('inbox refreshing...');
 		data.messages = await getMessages(currentPage, rowsPerPage);
+		$unreadMessages = await getUnreadMessageCount();
 		items = data.messages;
 	};
 
@@ -96,6 +98,7 @@
 		let ids = selectedItems.map((x) => x.id);
 		await markMessagesAsRead(ids);
 		resetSelection();
+		refreshInbox();
 		invalidateAll();
 	};
 
@@ -107,6 +110,12 @@
 	let allSelected: boolean = true;
 	let selectedItems: IMessage[] = [];
 	const updateSort = () => (data.messages = handleSort(data.messages, sort, sortDirection));
+
+	if (browser) {
+		unreadMessages.subscribe(async () => {
+			refreshInbox();
+		});
+	}
 </script>
 
 <svelte:head>
@@ -196,7 +205,7 @@
 								</form>
 							</TableCell>
 							<TableCell>
-								<form action="?/mark_read" method="post" use:enhance>
+								<form action="?/mark_read" method="post" use:enhance={() => refreshInbox()}>
 									<input type="hidden" name="id" value={item.id} />
 									<Button disabled={item.read}>
 										<Icon class="material-icons grey"

@@ -1,12 +1,13 @@
 import type { IMessage } from '../interfaces/IMessage';
 import supabase from './supabase';
 
-export async function getUnreadMessageCount(username: string): Promise<number> {
+export async function getUnreadMessageCount(): Promise<number> {
 	const { data } = await supabase
 		.from('messages')
 		.select('*')
 		.eq('read', false)
-		.eq('recipient', username);
+
+	console.dir("Unread messages: " +  data?.length)
 
 	return data?.length as number;
 }
@@ -52,7 +53,7 @@ export async function getMessages(page: number = 0, limit: number = 10, username
 		.select('*')
 		.order('read', { ascending: true })
 		.order('id', { ascending: true })
-		.range(from, to);
+		// .range(from, to);
 
 	return data as IMessage[];
 }

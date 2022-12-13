@@ -90,13 +90,12 @@ class ApiClient {
 		return data?.length != 0;
 	}
 
-	async getUnreadMessageCount(username: string): Promise<number> {
+	async getUnreadMessageCount(): Promise<number> {
 		const { supabaseClient } = await getSupabase(this.event);
 		const { data, error } = await supabaseClient
 			.from('messages')
 			.select('*')
-			.eq('read', false)
-			.eq('recipient', username);
+			.eq('read', false);
 
 		return data?.length as number;
 	}
