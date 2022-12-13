@@ -23,6 +23,8 @@ export const load: PageServerLoad = async (event) => {
 	const { supabaseClient } = await getSupabase(event);
 	const { data: avatarUrl } = supabaseClient.storage.from('avatars').getPublicUrl(profile?.avatar_url)
 
+	console
+
 	return {
 		slug: params.username,
 		username: locals.userinfo?.username,
@@ -38,13 +40,14 @@ export const actions: import('./$types').Actions = {
         const { request } = event;
         const formData = await request.formData();
 
-		
+		console.dir(formData)
+
         const file = formData.get('avatar') as Blob;
 
-		console.dir(file)
+		console.dir(typeof(file))
+		
         const fileExt = file.name.split('.').pop();
         const filePath = `user_${event.locals.userinfo?.username}_avatar.${fileExt}`;
-
 
         const { supabaseClient } = await getSupabase(event);
         await supabaseClient.storage.from('avatars').upload(filePath, file);
@@ -53,7 +56,5 @@ export const actions: import('./$types').Actions = {
             .from('profiles')
             .update({ avatar_url: filePath })
             .eq('username', event.locals.userinfo?.username);
-
-        await supabaseClient.storage.from('avatars').download(filePath);
     }
 };

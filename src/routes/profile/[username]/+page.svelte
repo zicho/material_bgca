@@ -14,12 +14,13 @@
 
 <LayoutGrid>
 	<Cell spanDevices={{ desktop: 3, tablet: 2, phone: 1 }}>
-		<form method="post" use:enhance>
+		<form method="post" use:enhance enctype="multipart/form-data">
 			<div class="avatar-container">
 				<img id="avatar" src={data.avatarUrl} alt="avatar" />
-				<input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
-
-				<button class="upload-btn">Upload</button>
+				{#if data.isYourPage}
+					<input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
+					<button class="upload-btn">Upload</button>
+				{/if}
 			</div>
 		</form>
 	</Cell>
