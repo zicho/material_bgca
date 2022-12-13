@@ -1,3 +1,4 @@
 export interface IProfile {
-    description: string
+    description: string,
+    avatar_url: string,
 }

@@ -37,8 +37,6 @@
 
 	let unreadMessageCount = data.messageCount;
 
-	console.dir(data.messageCount)
-
 	if (browser) {
 		unreadMessages.subscribe(async () => {
 			unreadMessageCount = await getUnreadMessageCount();

@@ -32,7 +32,7 @@ class ApiClient {
 		const { supabaseClient } = await getSupabase(this.event);
 		const { data, error } = await supabaseClient
 			.from('profiles')
-			.select('description')
+			.select('description, avatar_url')
 			.eq('username', username)
 			.single();
 
@@ -41,7 +41,8 @@ class ApiClient {
 		}
 
 		return {
-			description: data?.description
+			description: data?.description,
+			avatar_url: data?.avatar_url,
 		};
 	}
 

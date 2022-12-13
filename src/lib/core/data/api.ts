@@ -7,8 +7,6 @@ export async function getUnreadMessageCount(): Promise<number> {
 		.select('*')
 		.eq('read', false)
 
-	console.dir("Unread messages: " +  data?.length)
-
 	return data?.length as number;
 }
 
